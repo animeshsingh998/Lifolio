@@ -16,7 +16,7 @@ export function isLookupProviderId(value: unknown): value is LookupProviderId {
 export const LOOKUP_PROVIDER_CHOICES: { id: LookupProviderId; label: string }[] = [
   { id: "tmdb_movie", label: "TMDB — movies" },
   { id: "tmdb_tv", label: "TMDB — TV shows" },
-  { id: "google_books", label: "Google Books" },
+  { id: "google_books", label: "Books (Google Books / Open Library)" },
 ];
 
 export type LookupOutput = { label: string; type: FieldType };

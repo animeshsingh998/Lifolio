@@ -5,7 +5,7 @@ Newest first.
 
 ## 2026-11-06 — Phase 3.1 images & lookup (code complete, not yet tested by owner)
 - Migration `0003_storage.sql` applied to the remote project with `npx supabase db push --remote --yes`.
-- Providers: TMDB movies/TV (v3 key or v4 token), Google Books (optional key). Brave Image Search reserved, not built.
+- Providers: TMDB movies/TV (v3 key or v4 token), Books = Google Books when `GOOGLE_BOOKS_API_KEY` is set, else Open Library (Google returns 429 for unkeyed requests from the owner's network). Brave Image Search reserved, not built.
 - Entry form: "Find" button + cover control (search / upload / URL / remove). Server downloads remote images into the bucket on save; signed URLs (1 h) on read.
 - Config: `next.config.ts` image hosts; `.env.example` gained `TMDB_API_KEY`, `GOOGLE_BOOKS_API_KEY`.
 - Observed: TMDB connections from the owner's network are intermittently reset (`ECONNRESET`). The picker shows a retry message; on Vercel this will not occur.

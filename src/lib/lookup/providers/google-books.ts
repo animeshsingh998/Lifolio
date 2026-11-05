@@ -1,11 +1,18 @@
 /**
- * Google Books provider. Works without a key (low shared quota); set
- * GOOGLE_BOOKS_API_KEY for your own quota. Mapping functions are pure and unit-tested.
+ * Books provider: Google Books when GOOGLE_BOOKS_API_KEY is set (best covers and
+ * descriptions), Open Library otherwise and whenever Google throttles (HTTP 429 is
+ * common for unkeyed requests). Both map to the same output keys, so field bindings
+ * do not care which source answered. Mapping functions are pure and unit-tested.
  */
 import { fetchWithRetry } from "../fetch-retry";
 import type { LookupProvider, LookupResult } from "../types";
 
-const API = "https://www.googleapis.com/books/v1";
+const GOOGLE_API = "https://www.googleapis.com/books/v1";
+const OL_API = "https://openlibrary.org";
+const OL_COVERS = "https://covers.openlibrary.org/b/id";
+const OL_PREFIX = "ol:";
+
+// ---- Google Books -----------------------------------------------------------
 
 export type GoogleVolume = {
   id: string;
@@ -23,12 +30,12 @@ export type GoogleVolume = {
   };
 };
 
+type ImageLinks = NonNullable<GoogleVolume["volumeInfo"]>["imageLinks"];
+
 function httpsImage(url: string | undefined): string | null {
   if (!url) return null;
   return url.replace(/^http:\/\//, "https://").replace(/&edge=curl/g, "");
 }
-
-type ImageLinks = NonNullable<GoogleVolume["volumeInfo"]>["imageLinks"];
 
 export function largestImage(links: ImageLinks) {
   if (!links) return null;
@@ -66,20 +73,82 @@ export function buildBooksQuery(query: string): string {
   return query;
 }
 
-async function booksFetch<T>(path: string, params: Record<string, string>): Promise<T> {
-  const url = new URL(`${API}${path}`);
+function googleKey() {
+  return process.env.GOOGLE_BOOKS_API_KEY?.trim() ?? "";
+}
+
+async function googleFetch<T>(path: string, params: Record<string, string>): Promise<T> {
+  const url = new URL(`${GOOGLE_API}${path}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  const key = process.env.GOOGLE_BOOKS_API_KEY?.trim();
+  const key = googleKey();
   if (key) url.searchParams.set("key", key);
   const res = await fetchWithRetry(url, { next: { revalidate: 86400 }, signal: AbortSignal.timeout(12000) });
   if (!res.ok) throw new Error(`Google Books ${res.status}`);
   return (await res.json()) as T;
 }
 
+// ---- Open Library -----------------------------------------------------------
+
+export type OpenLibraryDoc = {
+  key: string; // "/works/OL20806514W"
+  title: string;
+  subtitle?: string;
+  author_name?: string[];
+  first_publish_year?: number;
+  number_of_pages_median?: number;
+  isbn?: string[];
+  cover_i?: number;
+  subject?: string[];
+  publisher?: string[];
+};
+
+export function mapOpenLibraryDoc(d: OpenLibraryDoc): LookupResult {
+  const isbn = d.isbn?.find((i) => i.length === 13) ?? d.isbn?.[0] ?? null;
+  return {
+    externalId: `${OL_PREFIX}${d.key.replace(/^\/works\//, "")}`,
+    title: d.title,
+    subtitle: [d.author_name?.slice(0, 2).join(", "), d.first_publish_year].filter(Boolean).join(" · ") || undefined,
+    thumbnailUrl: d.cover_i ? `${OL_COVERS}/${d.cover_i}-M.jpg` : null,
+    imageUrl: d.cover_i ? `${OL_COVERS}/${d.cover_i}-L.jpg` : null,
+    values: {
+      authors: d.author_name?.join(", ") ?? null,
+      page_count: d.number_of_pages_median ?? null,
+      categories: d.subject?.slice(0, 3).join(", ") ?? null,
+      published_year: d.first_publish_year ?? null,
+      isbn,
+      publisher: d.publisher?.[0] ?? null,
+      description: null,
+      subtitle: d.subtitle ?? null,
+    },
+  };
+}
+
+async function openLibrarySearch(query: string): Promise<LookupResult[]> {
+  const url = new URL(`${OL_API}/search.json`);
+  const compact = query.replace(/[-\s]/g, "");
+  if (/^(97[89])?\d{9}[\dXx]$/.test(compact)) url.searchParams.set("isbn", compact);
+  else url.searchParams.set("q", query);
+  url.searchParams.set("limit", "10");
+  url.searchParams.set(
+    "fields",
+    "key,title,subtitle,author_name,first_publish_year,number_of_pages_median,isbn,cover_i,subject,publisher",
+  );
+  const res = await fetchWithRetry(url, {
+    headers: { "user-agent": "Lifolio/1.0 (personal archive)" },
+    next: { revalidate: 86400 },
+    signal: AbortSignal.timeout(12000),
+  });
+  if (!res.ok) throw new Error(`Open Library ${res.status}`);
+  const data = (await res.json()) as { docs?: OpenLibraryDoc[] };
+  return (data.docs ?? []).filter((d) => d.title).map(mapOpenLibraryDoc);
+}
+
+// ---- Provider ---------------------------------------------------------------
+
 export const googleBooks: LookupProvider = {
   id: "google_books",
-  label: "Google Books",
-  attribution: "Book data and covers from Google Books.",
+  label: "Books",
+  attribution: "Book data and covers from Google Books and Open Library.",
   outputs: {
     authors: { label: "Authors", type: "text" },
     page_count: { label: "Pages", type: "number" },
@@ -92,16 +161,27 @@ export const googleBooks: LookupProvider = {
   },
   isConfigured: () => true,
   async search(query) {
-    const data = await booksFetch<{ items?: GoogleVolume[] }>("/volumes", {
-      q: buildBooksQuery(query),
-      maxResults: "10",
-      printType: "books",
-    });
-    return (data.items ?? []).map(mapVolume);
+    if (googleKey()) {
+      try {
+        const data = await googleFetch<{ items?: GoogleVolume[] }>("/volumes", {
+          q: buildBooksQuery(query),
+          maxResults: "10",
+          printType: "books",
+        });
+        return (data.items ?? []).map(mapVolume);
+      } catch (error) {
+        console.warn("[lifolio] Google Books failed, falling back to Open Library:", error instanceof Error ? error.message : error);
+      }
+    }
+    return openLibrarySearch(query);
   },
   async details(externalId) {
+    if (externalId.startsWith(OL_PREFIX)) return null; // the search result already carries everything we map
     if (!/^[\w-]{1,40}$/.test(externalId)) return null;
-    const data = await booksFetch<GoogleVolume>(`/volumes/${externalId}`, {});
-    return mapVolume(data);
+    try {
+      return mapVolume(await googleFetch<GoogleVolume>(`/volumes/${externalId}`, {}));
+    } catch {
+      return null; // keep the search result's data
+    }
   },
 };

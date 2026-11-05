@@ -53,7 +53,7 @@ Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Sto
 
 ### 3.1 Images & lookup (code complete 2026-11-06, awaiting owner test)
 - [x] `0003_storage.sql`: private bucket `entry-images` (8 MB, image/* only), owner-folder policies; pushed via CLI
-- [x] Lookup contract + registry (`src/lib/lookup`); providers: TMDB movies, TMDB TV, Google Books; mapping unit tests
+- [x] Lookup contract + registry (`src/lib/lookup`); providers: TMDB movies, TMDB TV, Books (Google Books with key, Open Library fallback / default); mapping unit tests
 - [x] Server Actions `searchLookup` / `lookupDetails` (keys server-side, 24 h fetch cache)
 - [x] Picker dialog: debounced search, thumbnails, loading / empty / error states, attribution; pick fills title, cover and bound fields
 - [x] Cover control on the entry form: provider image, pasted URL (downloaded on save), file upload; remove

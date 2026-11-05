@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildBooksQuery, mapVolume } from "./providers/google-books";
+import { buildBooksQuery, mapOpenLibraryDoc, mapVolume } from "./providers/google-books";
 import { mapMovieDetails, mapMovieSearch, mapTvDetails } from "./providers/tmdb";
 import { templates } from "@/lib/collections/templates";
 import { googleBooks } from "./providers/google-books";
@@ -70,6 +70,24 @@ describe("Google Books mapping", () => {
     expect(r.thumbnailUrl).toBe("https://books.google.com/t.jpg");
     expect(r.imageUrl).toBe("https://books.google.com/m.jpg");
     expect(r.subtitle).toBe("Frank Herbert · 1965");
+  });
+
+  it("maps an Open Library doc to the same output keys", () => {
+    const r = mapOpenLibraryDoc({
+      key: "/works/OL20806514W",
+      title: "Surrounded by Idiots",
+      author_name: ["Thomas Erikson"],
+      first_publish_year: 2014,
+      number_of_pages_median: 304,
+      isbn: ["1250179939", "9781250179937"],
+      cover_i: 10105591,
+      subject: ["Sociology", "Communication", "Psychology", "Extra"],
+      publisher: ["Penguin Random House"],
+    });
+    expect(r.externalId).toBe("ol:OL20806514W");
+    expect(r.imageUrl).toBe("https://covers.openlibrary.org/b/id/10105591-L.jpg");
+    expect(r.values).toMatchObject({ authors: "Thomas Erikson", page_count: 304, published_year: 2014, isbn: "9781250179937", categories: "Sociology, Communication, Psychology" });
+    expect(Object.keys(r.values).sort()).toEqual(Object.keys(mapVolume({ id: "x" }).values).sort());
   });
 
   it("detects ISBN queries", () => {

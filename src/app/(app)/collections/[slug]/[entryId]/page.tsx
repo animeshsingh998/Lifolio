@@ -4,12 +4,13 @@ import { ArrowLeft, CalendarDays } from "lucide-react";
 import { CollectionIcon } from "@/components/collections/collection-icon";
 import { EntryActions } from "@/components/entries/entry-actions";
 import { StatusBadge } from "@/components/entries/status-badge";
-import { Stars, formatRating } from "@/components/entries/star-rating";
+import { Stars } from "@/components/entries/star-rating";
 import { FieldDisplay } from "@/components/fields/registry";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/fields/definitions";
+import { formatRating } from "@/lib/rating";
 import { getCollectionBySlug, getCollectionFields } from "@/lib/queries/collections";
 import { getEntry } from "@/lib/queries/entries";
 

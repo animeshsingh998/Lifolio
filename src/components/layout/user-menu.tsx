@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -44,9 +45,11 @@ export function UserMenu({ user }: { user: CurrentUser }) {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
-              {email}
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
+                {email}
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem render={<Link href="/settings" />}>
               <Settings />

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { COLLECTION_ICONS } from "./icons";
 import { templates } from "./templates";
 import { availableFieldTypes } from "@/lib/fields/definitions";
+import { LOOKUP_PROVIDER_IDS } from "@/lib/lookup/types";
 import { fieldOptionsSchema, statusOptionSchema } from "@/lib/queries/parse";
 import { FIELD_TYPES } from "@/types/domain";
 
@@ -33,6 +34,7 @@ export const collectionSettingsSchema = z.object({
   date_enabled: z.boolean(),
   date_label: z.string().trim().max(40, "Date label must be at most 40 characters."),
   default_layout: z.enum(["grid", "list"]),
+  lookup_provider: z.enum(["none", ...LOOKUP_PROVIDER_IDS]),
   status_options: statusOptionsFormSchema,
 });
 export type CollectionSettingsInput = z.input<typeof collectionSettingsSchema>;

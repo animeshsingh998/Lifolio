@@ -42,6 +42,8 @@ export type CollectionField = Omit<Tables<"collection_fields">, "type" | "option
 
 export type Entry = Omit<Tables<"entries">, "attributes"> & {
   attributes: Record<string, unknown>;
+  /** Short-lived signed URL for cover_image_path, resolved by the queries layer. */
+  cover_url: string | null;
 };
 
 export type ActivityLog = Tables<"activity_log">;

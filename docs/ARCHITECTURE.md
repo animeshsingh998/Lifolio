@@ -136,7 +136,8 @@ create index on activity_log (user_id, created_at desc);
 
 Triggers: `set_updated_at()` on profiles/collections/entries; `handle_new_user()` inserts
 a profile row on `auth.users` insert; a trigger on `entries` writes `activity_log` rows
-(Phase 4). Storage: private bucket `entry-images`, object path `{user_id}/{entry_id}/{uuid}.webp`.
+(Phase 4). Storage: private bucket `entry-images`, object path `{user_id}/{uuid}.{ext}` (flat: uploads happen
+before the entry exists; originals are stored as-is, resizing is a later enhancement).
 
 ### 2.1 Why promote `status`, `rating`, `occurred_on`, `tags`, `cover_image_path`
 
@@ -438,4 +439,7 @@ that folder.
 
 1. Phase 3: contract + registry, TMDB movies and TV, lookup picker UI with loading/empty/error states.
 2. Phase 4: Google Books (ISBN and title search).
-3. Later: a generic image provider for watches/shoes if a provider with acceptable terms is chosen.
+3. Later: a generic image provider for watches/shoes. Decision 2026-11-06: Google's Custom Search
+   API is closed to new customers; **Brave Image Search** (official API, image endpoint, monthly free
+   credit, card required) is the candidate, reserved as provider id `brave_images`. Not built yet;
+   upload and paste-a-URL cover the gap.

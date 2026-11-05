@@ -3,6 +3,13 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-06 — Phase 3.1 images & lookup (code complete, not yet tested by owner)
+- Migration `0003_storage.sql` applied to the remote project with `npx supabase db push --remote --yes`.
+- Providers: TMDB movies/TV (v3 key or v4 token), Google Books (optional key). Brave Image Search reserved, not built.
+- Entry form: "Find" button + cover control (search / upload / URL / remove). Server downloads remote images into the bucket on save; signed URLs (1 h) on read.
+- Config: `next.config.ts` image hosts; `.env.example` gained `TMDB_API_KEY`, `GOOGLE_BOOKS_API_KEY`.
+- Observed: TMDB connections from the owner's network are intermittently reset (`ECONNRESET`). The picker shows a retry message; on Vercel this will not occur.
+
 ## 2026-11-06 — Theme refresh
 - New look inspired by the TIGERS agency site: near-black surfaces, one signal-red accent (`oklch(0.665 0.225 30)`), warm off-white light mode, Manrope body + Space Grotesk headings, pill buttons, uppercase sidebar labels. Tokens only in `globals.css`; no logic changed.
 - Supabase CLI linked (CLI 3.0 uses `--remote`, not `--linked`); both migrations marked applied, so future migrations go through `npx supabase db push`.
@@ -31,8 +38,7 @@ Newest first.
 - Local toolchain: Node 24.19.0 via nvm-windows. `gh`, `vercel`, `supabase` CLIs are not installed.
 
 ## Owner to-do
-1. Go through `docs/TESTING.md` (Phase 2) and report anything broken.
-2. Phase 3 lookup: create a free TMDB API key and put it in `.env.local` as `TMDB_API_KEY`.
-3. Vercel: import the GitHub repo, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_ALLOW_SIGNUP`, `NEXT_PUBLIC_SITE_URL`, `CRON_SECRET` (any long random string).
-4. Supabase → Authentication → URL Configuration: add the Vercel URL's `/auth/confirm` to Redirect URLs.
-5. Phase 3 later: TMDB API key.
+1. Go through `docs/TESTING.md` Phase 2 and Phase 3 and report anything broken.
+2. Vercel: import the GitHub repo, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_ALLOW_SIGNUP`, `NEXT_PUBLIC_SITE_URL`, `CRON_SECRET` (any long random string).
+3. Supabase → Authentication → URL Configuration: add the Vercel URL's `/auth/confirm` to Redirect URLs.
+4. Add `TMDB_API_KEY` (and optionally `GOOGLE_BOOKS_API_KEY`) to the Vercel project too.

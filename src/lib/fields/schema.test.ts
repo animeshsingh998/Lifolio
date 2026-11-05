@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildEntrySchema, entryDefaults } from "./schema";
+import { buildEntrySchema, emptyCover, entryDefaults } from "./schema";
 import { fieldDefinitions } from "./definitions";
 import type { CollectionField } from "@/types/domain";
 
@@ -50,6 +50,7 @@ describe("buildEntrySchema", () => {
       notes: " great ",
       tags: ["Sci-Fi", "sci-fi", "Nolan"],
       is_favorite: true,
+      cover: { ...emptyCover, source_url: "https://image.tmdb.org/t/p/w780/x.jpg", image_source: "provider", external_provider: "tmdb_movie", external_id: "27205" },
       attributes: {
         f_director: "Christopher Nolan",
         f_year: "2010",
@@ -66,6 +67,14 @@ describe("buildEntrySchema", () => {
     expect(result.data.notes).toBe("great");
     expect(result.data.tags).toEqual(["sci-fi", "nolan"]);
     expect(result.data.attributes.f_year).toBe(2010);
+    expect(result.data.cover.external_provider).toBe("tmdb_movie");
+  });
+
+  it("rejects a non-http image URL and unknown providers", () => {
+    const base = { ...entryDefaults(fields), title: "Dune", attributes: { ...entryDefaults(fields).attributes, f_brand: "x" } };
+    expect(schema.safeParse({ ...base, cover: { ...emptyCover, source_url: "ftp://x/y.jpg" } }).success).toBe(false);
+    expect(schema.safeParse({ ...base, cover: { ...emptyCover, external_provider: "brave_images" } }).success).toBe(false);
+    expect(schema.safeParse({ ...base, cover: { ...emptyCover, source_url: "" } }).success).toBe(true);
   });
 
   it("treats empty strings as null for optional custom fields", () => {

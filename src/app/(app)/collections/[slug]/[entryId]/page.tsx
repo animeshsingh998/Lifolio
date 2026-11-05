@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
@@ -114,8 +115,12 @@ export default async function EntryPage({ params }: Props) {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex aspect-[4/3] items-center justify-center rounded-xl border bg-gradient-to-br from-muted to-muted/40">
-            <CollectionIcon name={collection.icon} className="size-10 text-muted-foreground/40" />
+          <div className="relative flex aspect-[3/4] items-center justify-center overflow-hidden rounded-xl border bg-gradient-to-br from-muted to-muted/40">
+            {entry.cover_url ? (
+              <Image src={entry.cover_url} alt={`Cover of ${entry.title}`} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover" priority />
+            ) : (
+              <CollectionIcon name={collection.icon} className="size-10 text-muted-foreground/40" />
+            )}
           </div>
           {entry.tags.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">

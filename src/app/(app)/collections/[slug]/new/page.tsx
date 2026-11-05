@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { EntryForm } from "@/components/entries/entry-form";
 import { PageHeader } from "@/components/layout/page-header";
+import { providerInfo } from "@/lib/lookup/registry";
 import { getCollectionBySlug, getCollectionFields } from "@/lib/queries/collections";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -21,7 +22,7 @@ export default async function NewEntryPage({ params }: Props) {
     <>
       <PageHeader title={`New ${collection.item_noun}`} description={`Add to ${collection.name}.`} />
       <div className="max-w-2xl">
-        <EntryForm collection={collection} fields={fields} />
+        <EntryForm collection={collection} fields={fields} lookup={providerInfo(collection.lookup_provider)} />
       </div>
     </>
   );

@@ -5,6 +5,7 @@
  */
 import { z } from "zod";
 import { fieldDefinitions } from "./definitions";
+import { LOOKUP_PROVIDER_IDS } from "@/lib/lookup/types";
 import type { Collection, CollectionField } from "@/types/domain";
 
 export const MAX_TAGS = 30;
@@ -50,8 +51,35 @@ export function buildEntrySchema(
       .transform((tags) => Array.from(new Set(tags.map((t) => t.toLowerCase())))),
     is_favorite: z.boolean(),
     attributes: z.object(attributeShape),
+    cover: coverSchema,
   });
 }
+
+/**
+ * Cover image state carried by the form. Exactly one of these shapes is in play:
+ * - path set, source_url null  → keep an existing / just-uploaded storage object
+ * - source_url set             → the server downloads it into storage on save
+ * - both null                  → no image (an old one is removed)
+ */
+export const coverSchema = z.object({
+  path: z.string().max(300).nullable(),
+  source_url: z.preprocess(
+    emptyToNull,
+    z.url({ protocol: /^https?$/, error: "Image URL must start with http:// or https://." }).max(2000).nullable(),
+  ),
+  image_source: z.enum(["upload", "url", "provider"]).nullable(),
+  external_provider: z.enum(LOOKUP_PROVIDER_IDS).nullable(),
+  external_id: z.string().max(100).nullable(),
+});
+export type CoverInput = z.input<typeof coverSchema>;
+
+export const emptyCover: CoverInput = {
+  path: null,
+  source_url: null,
+  image_source: null,
+  external_provider: null,
+  external_id: null,
+};
 
 export type EntrySchema = ReturnType<typeof buildEntrySchema>;
 export type EntryFormInput = z.input<EntrySchema>;
@@ -69,8 +97,19 @@ export function entryDefaults(
     tags: string[];
     is_favorite: boolean;
     attributes: Record<string, unknown>;
+    cover_image_path: string | null;
+    image_source: string | null;
+    external_provider: string | null;
+    external_id: string | null;
   },
 ): EntryFormInput {
+  const provider = (LOOKUP_PROVIDER_IDS as readonly string[]).includes(entry?.external_provider ?? "")
+    ? (entry!.external_provider as (typeof LOOKUP_PROVIDER_IDS)[number])
+    : null;
+  const source =
+    entry?.image_source === "upload" || entry?.image_source === "url" || entry?.image_source === "provider"
+      ? entry.image_source
+      : null;
   const attributes: Record<string, unknown> = {};
   for (const f of fields) {
     const existing = entry?.attributes[f.key];
@@ -85,5 +124,8 @@ export function entryDefaults(
     tags: entry?.tags ?? [],
     is_favorite: entry?.is_favorite ?? false,
     attributes,
+    cover: entry
+      ? { path: entry.cover_image_path, source_url: null, image_source: source, external_provider: provider, external_id: entry.external_id }
+      : emptyCover,
   };
 }

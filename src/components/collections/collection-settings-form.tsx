@@ -24,6 +24,7 @@ import {
   type CollectionSettingsOutput,
 } from "@/lib/collections/schemas";
 import { statusKey } from "@/lib/collections/slug";
+import { LOOKUP_PROVIDER_CHOICES, isLookupProviderId } from "@/lib/lookup/types";
 import { STATUS_KINDS, type Collection, type StatusKind } from "@/types/domain";
 
 const KIND_LABELS: Record<StatusKind, string> = {
@@ -51,6 +52,7 @@ export function CollectionSettingsForm({ collection }: { collection: Collection 
       date_enabled: collection.date_label !== null,
       date_label: collection.date_label ?? "Date",
       default_layout: collection.default_layout,
+      lookup_provider: isLookupProviderId(collection.lookup_provider) ? collection.lookup_provider : "none",
       status_options: collection.status_options,
     },
   });
@@ -172,6 +174,29 @@ export function CollectionSettingsForm({ collection }: { collection: Collection 
                 render={({ field }) => <Switch id="c-date" checked={field.value} onCheckedChange={field.onChange} />}
               />
               <FieldLabel htmlFor="c-date">Track a date per entry</FieldLabel>
+            </Field>
+            <Field className="sm:max-w-xs">
+              <FieldLabel htmlFor="c-lookup">Metadata lookup</FieldLabel>
+              <Controller
+                control={form.control}
+                name="lookup_provider"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={(v) => v && field.onChange(v)}>
+                    <SelectTrigger id="c-lookup" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      {LOOKUP_PROVIDER_CHOICES.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FieldDescription>Search a provider when adding entries to fill the cover and bound fields.</FieldDescription>
             </Field>
             {dateEnabled ? (
               <Field data-invalid={!!form.formState.errors.date_label} className="sm:max-w-xs">

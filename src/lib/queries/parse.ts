@@ -72,5 +72,5 @@ export function parseEntry(row: Tables<"entries">): Entry {
     row.attributes && typeof row.attributes === "object" && !Array.isArray(row.attributes)
       ? (row.attributes as Record<string, unknown>)
       : {};
-  return { ...row, attributes };
+  return { ...row, attributes, cover_url: null };
 }

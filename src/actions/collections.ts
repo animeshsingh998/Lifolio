@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { blankStatusOptions, getTemplate } from "@/lib/collections/templates";
 import { collectionSettingsSchema, createCollectionSchema } from "@/lib/collections/schemas";
 import { uniqueSlug } from "@/lib/collections/slug";
+import { removeImages } from "@/lib/images/storage";
 import { parseStatusOptions } from "@/lib/queries/parse";
 import { createClient } from "@/lib/supabase/server";
 import type { Layout } from "@/types/domain";
@@ -95,6 +96,7 @@ export async function updateCollectionSettings(collectionId: string, input: unkn
       show_rating: v.show_rating,
       date_label: v.date_enabled ? v.date_label || "Date" : null,
       default_layout: v.default_layout,
+      lookup_provider: v.lookup_provider === "none" ? null : v.lookup_provider,
       status_options: v.status_options,
     })
     .eq("id", collectionId);
@@ -131,9 +133,16 @@ export async function setCollectionLayout(collectionId: string, layout: Layout):
 export async function deleteCollection(collectionId: string): Promise<ActionResult> {
   await requireUser();
   const supabase = await createClient();
+  // Storage objects do not cascade; collect them first.
+  const { data: covers } = await supabase
+    .from("entries")
+    .select("cover_image_path")
+    .eq("collection_id", collectionId)
+    .not("cover_image_path", "is", null);
   const { error, count } = await supabase.from("collections").delete({ count: "exact" }).eq("id", collectionId);
   if (error) return dbFail("Deleting the collection", error);
   if (!count) return fail("Collection not found.");
+  await removeImages(supabase, (covers ?? []).map((c) => c.cover_image_path));
   revalidateCollections();
   redirect("/collections");
 }

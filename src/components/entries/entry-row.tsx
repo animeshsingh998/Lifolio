@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { StatusBadge } from "./status-badge";
@@ -16,7 +17,10 @@ export function EntryRow({ collection, fields, entry }: EntryRowProps) {
       className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-4 py-3 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:grid-cols-[minmax(0,2fr)_repeat(var(--cols),minmax(0,1fr))_auto_auto]"
       style={{ "--cols": cardFields.length } as React.CSSProperties}
     >
-      <span className="flex min-w-0 items-center gap-2">
+      <span className="flex min-w-0 items-center gap-3">
+        <span className="relative size-9 shrink-0 overflow-hidden rounded-md bg-muted">
+          {entry.cover_url ? <Image src={entry.cover_url} alt="" fill sizes="36px" className="object-cover" /> : null}
+        </span>
         <span className="truncate text-sm font-medium">{entry.title}</span>
         {entry.is_favorite ? <Heart className="size-3.5 shrink-0 fill-rose-500 text-rose-500" aria-label="Favourite" /> : null}
       </span>

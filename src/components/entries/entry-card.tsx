@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { StatusBadge } from "./status-badge";
@@ -17,8 +18,18 @@ export function EntryCard({ collection, fields, entry }: EntryCardProps) {
       href={`/collections/${collection.slug}/${entry.id}`}
       className="group flex flex-col overflow-hidden rounded-xl border bg-card text-card-foreground transition-colors hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
-      <div className="relative flex aspect-[4/3] items-center justify-center bg-gradient-to-br from-muted to-muted/40">
-        <CollectionIcon name={collection.icon} className="size-8 text-muted-foreground/50" />
+      <div className="relative flex aspect-[3/4] items-center justify-center bg-gradient-to-br from-muted to-muted/40">
+        {entry.cover_url ? (
+          <Image
+            src={entry.cover_url}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        ) : (
+          <CollectionIcon name={collection.icon} className="size-8 text-muted-foreground/50" />
+        )}
         {entry.is_favorite ? (
           <Heart className="absolute top-2 right-2 size-4 fill-rose-500 text-rose-500" aria-label="Favourite" />
         ) : null}

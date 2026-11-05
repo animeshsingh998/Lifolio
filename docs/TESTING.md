@@ -36,3 +36,28 @@ the URL, what you clicked, and the exact error text from the red Next.js overlay
     collections from the first.
 15. **Look & feel**: light and dark mode, phone width (sidebar becomes a drawer), keyboard
     Tab through the entry form, dropdowns and dialogs close with Esc.
+
+## Phase 3.1 — Images & lookup
+
+**Before you start:** `TMDB_API_KEY` must be in `.env.local` and the dev server restarted after adding it.
+Storage migration 0003 is already applied.
+
+1. **Movies → Add movie**: the title row has a **Find** button and the cover box a **Search TMDB** button.
+   Type "Inception" → results with posters appear after a short pause; pick one → title, poster preview,
+   Director, Release year, Genre, Runtime fill in. Edit anything, save → detail page shows the poster.
+2. **Grid and list** show the poster; the sidebar count updates as before.
+3. **TV Shows**: same with "Severance" → Created by, First aired, Seasons, Genre.
+4. **Books**: "Dune Herbert" or an ISBN like `9780441013593` → Author, Pages, Published, ISBN, cover.
+5. **Upload**: on a watch, click Upload, choose a JPEG/PNG under 8 MB → preview appears at once; save →
+   cover shows everywhere. Edit → Remove → save → placeholder is back.
+6. **From URL**: paste a direct image link (ends in .jpg/.png) → save → image is copied into your storage
+   (the detail page URL points at Supabase, not the original site). A non-image URL shows an error under
+   the cover box and nothing is saved.
+7. **Replace**: edit an entry with a cover, pick a different one, save → new image shows; the old file is
+   gone from Storage (Supabase → Storage → entry-images → your folder).
+8. **Delete** an entry with a cover → its file disappears from Storage. Deleting a whole collection does the same.
+9. **Provider off**: in a collection's settings set Metadata lookup to None → the Find/Search buttons vanish.
+   Set a blank collection to TMDB — movies → they appear.
+10. **Errors**: with the network off, search shows "search failed, try again" rather than hanging.
+11. **Isolation**: a signed URL copied from one account does not work after it expires (1 h), and another
+    account never sees the file.

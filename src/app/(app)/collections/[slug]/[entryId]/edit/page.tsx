@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { EntryForm } from "@/components/entries/entry-form";
 import { PageHeader } from "@/components/layout/page-header";
+import { providerInfo } from "@/lib/lookup/registry";
 import { getCollectionBySlug, getCollectionFields } from "@/lib/queries/collections";
 import { getEntry } from "@/lib/queries/entries";
 
@@ -27,7 +28,7 @@ export default async function EditEntryPage({ params }: Props) {
     <>
       <PageHeader title={`Edit ${collection.item_noun}`} description={entry.title} />
       <div className="max-w-2xl">
-        <EntryForm collection={collection} fields={fields} entry={entry} />
+        <EntryForm collection={collection} fields={fields} entry={entry} lookup={providerInfo(collection.lookup_provider)} />
       </div>
     </>
   );

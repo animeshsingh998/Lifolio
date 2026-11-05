@@ -49,12 +49,23 @@ Approved with: activity log now, react-hook-form + Zod, Vitest, dnd-kit drag-and
 
 Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Storage, lookup.
 
-## Phase 3 — Browsing, images & lookup
+## Phase 3 — Images, lookup & browsing (reordered 2026-11-06: images first)
+
+### 3.1 Images & lookup (code complete 2026-11-06, awaiting owner test)
+- [x] `0003_storage.sql`: private bucket `entry-images` (8 MB, image/* only), owner-folder policies; pushed via CLI
+- [x] Lookup contract + registry (`src/lib/lookup`); providers: TMDB movies, TMDB TV, Google Books; mapping unit tests
+- [x] Server Actions `searchLookup` / `lookupDetails` (keys server-side, 24 h fetch cache)
+- [x] Picker dialog: debounced search, thumbnails, loading / empty / error states, attribution; pick fills title, cover and bound fields
+- [x] Cover control on the entry form: provider image, pasted URL (downloaded on save), file upload; remove
+- [x] Signed URLs on read; covers on cards, rows and the detail page; images removed with their entry / collection
+- [x] Collection settings: choose a lookup provider (so blank collections can use one)
+- [ ] Owner: test per `TESTING.md` Phase 3
+- Deferred: generic image search for watches / shoes etc. — **Brave Image Search** (`brave_images`, env `BRAVE_SEARCH_API_KEY`); decided 2026-11-06 to add later if needed. Google's image API is closed to new customers. Until then: upload or paste a URL.
+- Deferred: `image` custom field type (extra photos) and server-side resize/WebP conversion.
+
+### 3.2 Browsing
 - [ ] Search, filters (status, tags, rating, select fields), sorting via URL params
-- [ ] Storage bucket + policies; cover upload; image field type; signed URLs
-- [ ] Lookup provider contract + registry; TMDB movies + TV
-- [ ] Lookup picker UI (debounced search, results grid, loading/empty/error, attribution)
-- [ ] Provider image download-and-store on save; manual image URL option
+- [ ] Pagination past 500 entries
 
 ## Phase 4 — Dashboard, timeline, export
 - [ ] Dashboard: stats per collection, recently added, in-progress, recent activity (from `activity_log`)

@@ -1,8 +1,17 @@
 import "server-only";
 import { cache } from "react";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { signImageUrls } from "@/lib/images/storage";
 import { createClient } from "@/lib/supabase/server";
 import { parseEntry } from "./parse";
+import type { Database } from "@/types/database";
 import type { Entry } from "@/types/domain";
+
+/** Resolve signed URLs for every cover in one storage call. */
+async function withCoverUrls(supabase: SupabaseClient<Database>, entries: Entry[]): Promise<Entry[]> {
+  const urls = await signImageUrls(supabase, entries.map((e) => e.cover_image_path));
+  return entries.map((e) => ({ ...e, cover_url: e.cover_image_path ? (urls.get(e.cover_image_path) ?? null) : null }));
+}
 
 /** Phase 2: newest first, capped. Search, filters, sort and paging arrive in Phase 3. */
 export const ENTRY_PAGE_LIMIT = 500;
@@ -16,7 +25,7 @@ export const listEntries = cache(async (collectionId: string): Promise<Entry[]> 
     .order("updated_at", { ascending: false })
     .limit(ENTRY_PAGE_LIMIT);
   if (error) throw new Error(`Could not load entries: ${error.message}`);
-  return data.map(parseEntry);
+  return withCoverUrls(supabase, data.map(parseEntry));
 });
 
 export const getEntry = cache(async (collectionId: string, entryId: string): Promise<Entry | null> => {
@@ -28,5 +37,7 @@ export const getEntry = cache(async (collectionId: string, entryId: string): Pro
     .eq("id", entryId)
     .maybeSingle();
   if (error) throw new Error(`Could not load entry: ${error.message}`);
-  return data ? parseEntry(data) : null;
+  if (!data) return null;
+  const [entry] = await withCoverUrls(supabase, [parseEntry(data)]);
+  return entry;
 });

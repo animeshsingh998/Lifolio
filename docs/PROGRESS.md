@@ -3,6 +3,11 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-06 — Theme refresh
+- New look inspired by the TIGERS agency site: near-black surfaces, one signal-red accent (`oklch(0.665 0.225 30)`), warm off-white light mode, Manrope body + Space Grotesk headings, pill buttons, uppercase sidebar labels. Tokens only in `globals.css`; no logic changed.
+- Supabase CLI linked (CLI 3.0 uses `--remote`, not `--linked`); both migrations marked applied, so future migrations go through `npx supabase db push`.
+- Fixed: entry detail page called a client-only `formatRating`; moved to `src/lib/rating.ts`.
+
 ## 2026-11-05 — Phase 2 code complete (not yet tested by owner)
 - Migration `0002_collections.sql`: collections, collection_fields, entries, activity_log (+ RLS, triggers, `remove_entry_attribute` RPC).
 - Field registry (`src/lib/fields`), Zod entry-schema builder shared by form and Server Actions, 5 templates, slug helpers; Vitest (9 tests).
@@ -26,8 +31,8 @@ Newest first.
 - Local toolchain: Node 24.19.0 via nvm-windows. `gh`, `vercel`, `supabase` CLIs are not installed.
 
 ## Owner to-do
-1. **Run `supabase/migrations/0002_collections.sql`** in the Supabase SQL editor, then go through `docs/TESTING.md`.
-2. Install the Supabase CLI (see README) so future migrations can be pushed from the repo.
+1. Go through `docs/TESTING.md` (Phase 2) and report anything broken.
+2. Phase 3 lookup: create a free TMDB API key and put it in `.env.local` as `TMDB_API_KEY`.
 3. Vercel: import the GitHub repo, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_ALLOW_SIGNUP`, `NEXT_PUBLIC_SITE_URL`, `CRON_SECRET` (any long random string).
 4. Supabase → Authentication → URL Configuration: add the Vercel URL's `/auth/confirm` to Redirect URLs.
 5. Phase 3 later: TMDB API key.

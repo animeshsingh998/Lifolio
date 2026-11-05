@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Manrope, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SITE_NAME } from "@/lib/site";
 import "./globals.css";
 
-const fontSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
+// Manrope for reading, Space Grotesk for headings: a free pairing close to the
+// geometric grotesque look of the reference brand.
+const fontSans = Manrope({ variable: "--font-sans", subsets: ["latin"] });
+const fontHeading = Space_Grotesk({ variable: "--font-heading", subsets: ["latin"] });
 const fontMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}
+      className={`${fontSans.variable} ${fontHeading.variable} ${fontMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider>

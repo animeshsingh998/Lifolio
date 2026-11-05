@@ -44,7 +44,7 @@ export function AppSidebar({ user, collections }: AppSidebarProps) {
               <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <Layers className="size-4" />
               </span>
-              <span className="font-semibold tracking-tight">{SITE_NAME}</span>
+              <span className="font-heading text-base font-bold tracking-[0.08em] uppercase">{SITE_NAME}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

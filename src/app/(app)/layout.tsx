@@ -5,15 +5,26 @@ import { AppShellSkeleton } from "@/components/layout/app-shell-skeleton";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { requireUser } from "@/lib/auth";
+import { listCollections } from "@/lib/queries/collections";
+import type { CollectionSummary } from "@/types/domain";
 
 async function AppShell({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
   const cookieStore = await cookies();
   const sidebarOpen = cookieStore.get("sidebar_state")?.value !== "false";
 
+  // The sidebar must never take the whole app down (e.g. before migrations are applied);
+  // pages surface the real error through their own error boundaries.
+  let collections: CollectionSummary[] = [];
+  try {
+    collections = await listCollections();
+  } catch (error) {
+    console.error("[lifolio] sidebar collections:", error);
+  }
+
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
-      <AppSidebar user={user} />
+      <AppSidebar user={user} collections={collections} />
       <SidebarInset>
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4 md:hidden">
           <SidebarTrigger className="-ml-1" />

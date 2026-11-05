@@ -163,6 +163,10 @@ as $$
 declare
   v_collection_name text;
 begin
+  if current_setting('lifolio.skip_activity', true) = 'on' then
+    return coalesce(new, old);
+  end if;
+
   select name into v_collection_name from public.collections where id = coalesce(new.collection_id, old.collection_id);
 
   -- Parent collection is being deleted (cascade): skip per-entry noise.
@@ -239,3 +243,25 @@ drop trigger if exists collections_log_activity on public.collections;
 create trigger collections_log_activity
   after insert or delete on public.collections
   for each row execute function public.log_collection_activity();
+
+-- ---------------------------------------------------------------------------
+-- Helpers called from the app via supabase.rpc(). SECURITY INVOKER: RLS applies.
+-- ---------------------------------------------------------------------------
+
+-- Deleting a custom field removes its key from every entry of that collection.
+-- Sets a transaction-local flag so the activity trigger does not log one
+-- "Updated …" row per entry for what is a schema change, not a user edit.
+create or replace function public.remove_entry_attribute(p_collection_id uuid, p_key text)
+returns void
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+begin
+  perform set_config('lifolio.skip_activity', 'on', true);
+  update public.entries
+     set attributes = attributes - p_key
+   where collection_id = p_collection_id
+     and attributes ? p_key;
+end;
+$$;

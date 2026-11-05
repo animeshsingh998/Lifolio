@@ -11,39 +11,40 @@ Phased roadmap. Each phase ends with a working deploy on Vercel. Details in `ARC
 - [x] GitHub repo pushed
 - [ ] Vercel project + env vars (`CRON_SECRET`, Supabase URL/key, `NEXT_PUBLIC_SITE_URL`) — can happen any time
 
-## Phase 2 — Collections & dynamic entries (proposed, awaiting approval)
+## Phase 2 — Collections & dynamic entries (code complete 2026-11-05, awaiting owner test)
 
-Built in five steps; each one is usable and committed before the next starts.
+Approved with: activity log now, react-hook-form + Zod, Vitest, dnd-kit drag-and-drop.
 
 ### 2.1 Data layer (no UI)
-- [ ] `0002_collections.sql`: `collections`, `collection_fields`, `entries`, `activity_log` + indexes, `owner_all` RLS, `set_updated_at` triggers, activity trigger on entries
-- [ ] `src/types/database.ts` hand-written for now (5 tables); switch to `supabase gen types` once the CLI is set up
-- [ ] `src/lib/fields/registry.ts` (text, textarea, number, date, select, url, checkbox; `image` registered but hidden until Phase 3)
-- [ ] `src/lib/fields/schema.ts` — `buildEntrySchema(collection, fields)` Zod builder, used by both form and Server Action
-- [ ] `src/lib/collections/templates.ts` — Movies, TV Shows, Books, Watches, Shoes; `slug.ts`
-- [ ] Vitest for the pure logic above (schema builder, slug, templates validity)
+- [x] `0002_collections.sql`: `collections`, `collection_fields`, `entries`, `activity_log` + indexes, `owner_all` RLS, `set_updated_at` triggers, activity trigger on entries
+- [x] `src/types/database.ts` hand-written for now (5 tables); switch to `supabase gen types` once the CLI is set up
+- [x] `src/lib/fields/registry.ts` (text, textarea, number, date, select, url, checkbox; `image` registered but hidden until Phase 3)
+- [x] `src/lib/fields/schema.ts` — `buildEntrySchema(collection, fields)` Zod builder, used by both form and Server Action
+- [x] `src/lib/collections/templates.ts` — Movies, TV Shows, Books, Watches, Shoes; `slug.ts`
+- [x] Vitest for the pure logic above (schema builder, slug, templates validity)
 
 ### 2.2 Collections
-- [ ] `/collections`: cards (icon, name, entry count), "New collection" dialog → pick template or blank, name
-- [ ] Sidebar lists the user's collections
-- [ ] `/collections/[slug]/settings`: name, description, icon (curated Lucide set), item noun, rating on/off, date label, default layout
-- [ ] Status editor (add / rename / reorder / delete; kind planned|active|done|none; deleting clears that status on entries)
-- [ ] Delete collection (confirm dialog, cascades)
+- [x] `/collections`: cards (icon, name, entry count), "New collection" dialog → pick template or blank, name
+- [x] Sidebar lists the user's collections
+- [x] `/collections/[slug]/settings`: name, description, icon (curated Lucide set), item noun, rating on/off, date label, default layout
+- [x] Status editor (add / rename / drag-reorder / delete; kind planned|active|done|none; deleting clears that status on entries)
+- [x] Delete collection (confirm dialog, cascades)
 
 ### 2.3 Field editor (same settings page)
-- [ ] Add field dialog: label, type, options (select choices; number min/max/step/unit), required, show in card
-- [ ] Rename inline, reorder with up/down, delete (confirm; strips the key from all entries' `attributes`)
-- [ ] Type change not allowed (delete + re-create), per ARCHITECTURE §4
+- [x] Add field dialog: label, type, options (select choices; number min/max/step/unit), required, show in card
+- [x] Edit dialog, drag-to-reorder (dnd-kit), delete (confirm; strips the key from all entries' `attributes`)
+- [x] Type change not allowed (delete + re-create), per ARCHITECTURE §4
 
 ### 2.4 Entries
-- [ ] `/collections/[slug]`: grid / list toggle (persisted in `default_layout`), empty state
-- [ ] `/collections/[slug]/new` and `/[entryId]/edit`: generated form — title, status, rating (5 half-stars), date, tags, notes, favourite, then custom fields via registry
-- [ ] `/collections/[slug]/[entryId]`: detail view through `Display` components, edit / delete
-- [ ] Server Actions `createEntry` / `updateEntry` / `deleteEntry` re-validate with the same Zod schema
+- [x] `/collections/[slug]`: grid / list toggle (persisted in `default_layout`), empty state
+- [x] `/collections/[slug]/new` and `/[entryId]/edit`: generated form — title, status, rating (5 half-stars), date, tags, notes, favourite, then custom fields via registry
+- [x] `/collections/[slug]/[entryId]`: detail view through `Display` components, edit / delete
+- [x] Server Actions `createEntry` / `updateEntry` / `deleteEntry` re-validate with the same Zod schema
 
 ### 2.5 Wrap-up
-- [ ] Loading skeletons + error boundaries for collection routes, toasts on actions
-- [ ] Docs updated, lint / tsc / build / tests green, deployed
+- [x] Loading skeletons + error boundaries for collection routes, toasts on actions
+- [x] Docs updated, lint / tsc / build / tests green
+- [ ] Owner: run `0002_collections.sql`, walk through `TESTING.md`, deploy
 - Done when: "Fragrances" is created from the UI with 5 custom fields and has entries, without touching code
 
 Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Storage, lookup.

@@ -14,6 +14,23 @@ Stack: Next.js 16 (App Router) · TypeScript · Tailwind v4 · shadcn/ui · Supa
 4. `cp .env.example .env.local` and fill in the values.
 5. `npm run dev` → http://localhost:3000
 
+## Scripts
+
+`npm run dev` · `npm run build` · `npm run lint` · `npm test` (Vitest, pure logic only)
+
+## Supabase CLI (optional, recommended)
+
+Lets migrations be applied from the repo instead of pasting SQL.
+
+```bash
+npm i -D supabase                 # CLI as a dev dependency, run via npx
+npx supabase login                # opens the browser once
+npx supabase link --project-ref <ref>   # <ref> = the id in your project URL; asks for the DB password
+npx supabase migration repair --status applied 0001 0002   # if you already ran those by hand
+npx supabase db push              # applies any new files in supabase/migrations
+npx supabase gen types typescript --linked > src/types/database.ts
+```
+
 ## Deploy
 
 Push to GitHub, import the repo in Vercel, add the same env vars (plus a random `CRON_SECRET`).

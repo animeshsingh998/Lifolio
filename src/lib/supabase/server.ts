@@ -1,11 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
 /**
  * Supabase client for Server Components, Server Actions and Route Handlers.
  * Always create a new one per request; never store it in a module-level variable.
  */
 export async function createClient() {
+  // Session handling reads the clock (token expiry via Date.now()), which Cache Components
+  // treats as request-time I/O. connection() excludes everything below from prerendering.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient(

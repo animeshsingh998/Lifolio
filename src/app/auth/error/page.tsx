@@ -11,8 +11,8 @@ export default function AuthErrorPage() {
         Email links only work once and for a limited time. Request a new one and try again.
       </p>
       <div className="flex gap-2">
-        <Button render={<Link href="/login" />}>Back to login</Button>
-        <Button variant="outline" render={<Link href="/forgot-password" />}>
+        <Button nativeButton={false} render={<Link href="/login" />}>Back to login</Button>
+        <Button variant="outline" nativeButton={false} render={<Link href="/forgot-password" />}>
           Reset password
         </Button>
       </div>

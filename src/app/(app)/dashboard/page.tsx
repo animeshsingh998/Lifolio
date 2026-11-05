@@ -15,7 +15,7 @@ export default function DashboardPage() {
         title="Nothing here yet"
         description="Stats, recent items and activity will appear once you have collections with entries."
         action={
-          <Button variant="outline" render={<Link href="/collections" />}>
+          <Button variant="outline" nativeButton={false} render={<Link href="/collections" />}>
             Go to collections
           </Button>
         }

@@ -3,6 +3,10 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-05
+- Owner wired up Supabase locally; sign-up and login work.
+- Fixed two dev-overlay errors on /dashboard: Base UI `Button` rendering a `Link` needs `nativeButton={false}`; Supabase session checks call `Date.now()`, which Cache Components flags during runtime prerender, so `createClient()` now awaits `connection()` first.
+
 ## 2026-11-04 — Phase 1 code complete (not yet deployed)
 - Next.js 16.4.5 (App Router, `src/`, Cache Components on) + Tailwind v4 + shadcn/ui v4 (Base UI, nova preset, dark default).
 - Supabase SSR clients (`src/lib/supabase/{client,server,proxy}.ts`), `src/proxy.ts` session refresh + redirects.

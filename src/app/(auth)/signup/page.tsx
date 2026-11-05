@@ -11,7 +11,7 @@ export default function SignupPage() {
   if (!ALLOW_SIGNUP) {
     return (
       <AuthCard title="Sign-up is closed" description="New accounts are not being accepted right now.">
-        <Button variant="outline" className="w-full" render={<Link href="/login" />}>
+        <Button variant="outline" className="w-full" nativeButton={false} render={<Link href="/login" />}>
           Back to login
         </Button>
       </AuthCard>

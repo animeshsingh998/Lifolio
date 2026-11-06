@@ -192,6 +192,17 @@ export type Database = {
         Args: { p_collection_id: string };
         Returns: { tag: string; count: number }[];
       };
+      collection_stats: {
+        Args: Record<string, never>;
+        Returns: {
+          collection_id: string;
+          total: number;
+          favourites: number;
+          added_30d: number;
+          avg_rating: number | null;
+          status_counts: Json;
+        }[];
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

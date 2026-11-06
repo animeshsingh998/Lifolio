@@ -119,6 +119,7 @@ create index on entries (user_id, collection_id, updated_at desc);
 create index on entries (user_id, occurred_on desc);
 create index on entries using gin (tags);
 create index on entries using gin (title extensions.gin_trgm_ops);  -- 0004, ilike search
+-- 0005: collection_stats() aggregates per collection for the dashboard (security invoker, RLS-scoped)
 -- add later only if needed: gin (attributes jsonb_path_ops), tsvector for search
 
 -- 5. activity_log: feeds Dashboard "recent activity" and Timeline (Phase 4)

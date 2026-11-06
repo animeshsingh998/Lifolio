@@ -108,3 +108,22 @@ Migration 0004 is already applied (tag counts + title index).
     group with an "Open in collection" link that applies the search there.
 12. The sidebar has a **Search** item (shows "Ctrl K") and the mobile header a search icon; both open the palette.
 13. **Isolation**: searching for an entry title that exists only in another account returns nothing.
+
+## Phase 4.1 — Dashboard
+
+Migration 0005 is already applied.
+
+1. Open **Dashboard**. Four tiles: Entries, Collections, Added in 30 days, Favourites. Numbers match the
+   sidebar counts (entries = sum of all collections).
+2. **Currently tracking** shows entries whose status is an "in progress" kind (Watching, Reading, Wearing…),
+   newest first, max 8. Change an entry to Watching → it appears; mark it Watched → it leaves.
+3. **Recently added** shows the last 8 entries across all collections with covers; a fresh import shows up first.
+4. **Collections** cards: icon, name, count, "+N this month" when something was added in the last 30 days,
+   average star rating (only if the collection shows ratings), favourites count, and a slim bar split into
+   done / active / planned with a legend. Clicking a card opens the collection.
+5. **Recent activity** lists the last 15 changes ("Added …", "… → Watched", "Updated …", "Deleted …",
+   "Created collection …") with relative times ("3 h ago"). Rows whose entry still exists link to it; deleted
+   ones are plain text.
+6. **Empty states**: a brand-new account sees "Nothing here yet"; an account with collections but no entries
+   sees tiles at 0 plus Add / Import JSON buttons.
+7. **Mobile**: tiles 2×2, strips 2 per row, collections above the activity feed.

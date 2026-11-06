@@ -81,7 +81,7 @@ Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Sto
 
 ## Phase 4 — Dashboard, timeline, export
 
-### 4.1 Dashboard (proposed 2026-11-06, awaiting approval)
+### 4.1 Dashboard (approved and built 2026-11-06, awaiting owner test)
 Brief §5: collection statistics, recently added, recent activity, quick access, items currently tracked. Calm, no charts in v1.
 - Top row — four stat tiles: entries total, collections, added in the last 30 days, favourites
 - "Currently tracking" — entries whose status has kind `active` (Watching, Reading, …) across collections, newest first, up to 8 cover tiles
@@ -91,6 +91,7 @@ Brief §5: collection statistics, recently added, recent activity, quick access,
 - Data: migration `0005_dashboard.sql` adds `collection_stats()` (security invoker, one row per collection: total, counts per status, avg rating, favourites, added_30d); other sections are plain selects with signed cover URLs
 - Files: `src/lib/queries/dashboard.ts`, `src/lib/time.ts` (relative time, tested), `src/components/dashboard/{stat-tiles,collection-stat-card,entry-strip,activity-feed}.tsx`, `dashboard/page.tsx` + `loading.tsx`; `database.ts` function type
 - Empty states: no collections → current empty state; collections but no entries → tiles at 0 with a nudge to add or import
+- [x] migration `0005_dashboard.sql` applied · [x] queries · [x] components · [x] page + loading · [ ] Owner: test per `TESTING.md` Phase 4.1
 
 ### 4.2 Later in Phase 4
 - [ ] Timeline by `occurred_on` (month groups, reuses the filter bar idea)

@@ -3,7 +3,11 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
-## 2026-11-06 — Phase 3.3 browsing & global search (code complete, not yet tested by owner)
+## 2026-11-06 — Phase 3 done (owner verified 3.1–3.3)
+- Fixed: Ctrl K palette crashed (`reading subscribe`) because the Base UI `CommandDialog` does not wrap children in a cmdk `Command` root; the palette now does.
+- Phase 4.1 dashboard proposed in `PLAN.md`, awaiting a go.
+
+## 2026-11-06 — Phase 3.3 browsing & global search
 - Owner confirmed Phase 3.2 import and the form-reset fix work.
 - Collection pages: filter bar (search, status, rating, select fields, tags, favourites) + sort + pagination, all in the URL so views are shareable and survive back/forward. `listEntries` now takes parsed filters and returns `{ entries, total }`.
 - Global search: Ctrl/⌘ K palette anywhere in the app (sidebar "Search" item, icon in the mobile header) backed by the `quickSearch` Server Action; `/search?q=` shows full results grouped by collection.
@@ -47,7 +51,7 @@ Newest first.
 - Local toolchain: Node 24.19.0 via nvm-windows. `gh`, `vercel`, `supabase` CLIs are not installed.
 
 ## Owner to-do
-1. Go through `docs/TESTING.md` Phase 3.1 and Phase 3.3 and report anything broken.
+1. Approve or adjust the Phase 4.1 dashboard plan in `docs/PLAN.md`.
 2. Vercel: import the GitHub repo, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_ALLOW_SIGNUP`, `NEXT_PUBLIC_SITE_URL`, `CRON_SECRET` (any long random string).
 3. Supabase → Authentication → URL Configuration: add the Vercel URL's `/auth/confirm` to Redirect URLs.
 4. Add `TMDB_API_KEY` (and optionally `GOOGLE_BOOKS_API_KEY`) to the Vercel project too.

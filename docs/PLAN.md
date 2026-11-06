@@ -49,9 +49,9 @@ Approved with: activity log now, react-hook-form + Zod, Vitest, dnd-kit drag-and
 
 Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Storage, lookup.
 
-## Phase 3 — Images, lookup & browsing (reordered 2026-11-06: images first)
+## Phase 3 — Images, lookup & browsing — DONE 2026-11-06 (owner verified)
 
-### 3.1 Images & lookup (code complete 2026-11-06, awaiting owner test)
+### 3.1 Images & lookup (done)
 - [x] `0003_storage.sql`: private bucket `entry-images` (8 MB, image/* only), owner-folder policies; pushed via CLI
 - [x] Lookup contract + registry (`src/lib/lookup`); providers: TMDB movies, TMDB TV, Books (Google Books with key, Open Library fallback / default); mapping unit tests
 - [x] Server Actions `searchLookup` / `lookupDetails` (keys server-side, 24 h fetch cache)
@@ -59,11 +59,11 @@ Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Sto
 - [x] Cover control on the entry form: provider image, pasted URL (downloaded on save), file upload; remove
 - [x] Signed URLs on read; covers on cards, rows and the detail page; images removed with their entry / collection
 - [x] Collection settings: choose a lookup provider (so blank collections can use one)
-- [ ] Owner: test per `TESTING.md` Phase 3
+- [x] Owner: tested
 - Deferred: generic image search for watches / shoes etc. — **Brave Image Search** (`brave_images`, env `BRAVE_SEARCH_API_KEY`); decided 2026-11-06 to add later if needed. Google's image API is closed to new customers. Until then: upload or paste a URL.
 - Deferred: `image` custom field type (extra photos) and server-side resize/WebP conversion.
 
-### 3.2 Bulk import from JSON (code complete 2026-11-06, awaiting owner test)
+### 3.2 Bulk import from JSON (done)
 - Input: JSON array of `{ title | name, rating?, year?, status?, date?, tags?, notes?, <custom field label>? }`; ratings out of 5 (auto-detect, overridable)
 - Phase A "resolve": chunked provider search → review table (match, year, thumbnail, weak-match flag, duplicates, unmatched); rows can be unticked or switched to another result
 - Phase B "import": browser sends approved rows 5 at a time → details + cover + insert; progress, retry failures
@@ -71,20 +71,31 @@ Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Sto
 - Collections without a provider: plain bulk insert
 - [x] parser + tests · [x] `resolveImportBatch` / `importEntryBatch` actions · [x] `/collections/[slug]/import` wizard (paste → review → progress → summary, retry failed)
 
-### 3.3 Browsing (code complete 2026-11-06, awaiting owner test)
+### 3.3 Browsing (done)
 - [x] Per-collection filter bar: search (title / notes / tag), status, minimum rating, select fields, tags (with counts), favourites, sort — all URL params (`src/lib/entries/filters.ts`, unit-tested)
 - [x] Pagination, 60 per page (`?page=`), with "nothing on this page / clear filters" states
 - [x] Global search: Ctrl/⌘ K palette (collections + entries, debounced Server Action) and `/search?q=` results page grouped by collection
 - [x] `0004_search.sql`: `pg_trgm` index on `entries.title`, `collection_tag_counts()` RPC; applied remotely
-- [ ] Owner: test per `TESTING.md` Phase 3.3
+- [x] Owner: tested (fixed: palette needed an explicit cmdk `Command` root)
 - Later if needed: number-field sorting, "checked" filter for checkbox fields, saved views
 
 ## Phase 4 — Dashboard, timeline, export
-- [ ] Dashboard: stats per collection, recently added, in-progress, recent activity (from `activity_log`)
-- [ ] Timeline by `occurred_on`
+
+### 4.1 Dashboard (proposed 2026-11-06, awaiting approval)
+Brief §5: collection statistics, recently added, recent activity, quick access, items currently tracked. Calm, no charts in v1.
+- Top row — four stat tiles: entries total, collections, added in the last 30 days, favourites
+- "Currently tracking" — entries whose status has kind `active` (Watching, Reading, …) across collections, newest first, up to 8 cover tiles
+- "Recently added" — last 8 entries across collections as cover tiles (reuses `EntryCard`)
+- "Collections" — one compact card per collection: icon, name, count, slim planned/active/done bar, average rating, favourites; links to the collection (quick access)
+- "Recent activity" — last 15 `activity_log` rows: action icon, summary, relative time, link to the entry when it still exists
+- Data: migration `0005_dashboard.sql` adds `collection_stats()` (security invoker, one row per collection: total, counts per status, avg rating, favourites, added_30d); other sections are plain selects with signed cover URLs
+- Files: `src/lib/queries/dashboard.ts`, `src/lib/time.ts` (relative time, tested), `src/components/dashboard/{stat-tiles,collection-stat-card,entry-strip,activity-feed}.tsx`, `dashboard/page.tsx` + `loading.tsx`; `database.ts` function type
+- Empty states: no collections → current empty state; collections but no entries → tiles at 0 with a nudge to add or import
+
+### 4.2 Later in Phase 4
+- [ ] Timeline by `occurred_on` (month groups, reuses the filter bar idea)
 - [ ] JSON + CSV export (`/api/export`)
 - [ ] Profile settings (display name)
-- [ ] Google Books lookup provider
 
 ## Phase 5 — Later
 Goals & milestones · generic image provider · more field types · tag management · image galleries · custom SMTP · PWA

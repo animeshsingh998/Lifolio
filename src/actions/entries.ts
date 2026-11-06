@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { dbFail, fail, fromZod, ok, type ActionResult } from "@/lib/actions";
-import { requireUser, type CurrentUser } from "@/lib/auth";
-import { buildEntrySchema, type EntryFormOutput } from "@/lib/fields/schema";
-import { removeImages, storeImageFromUrl } from "@/lib/images/storage";
+import { requireUser } from "@/lib/auth";
+import { entryColumns, resolveCover } from "@/lib/entries/cover";
+import { buildEntrySchema } from "@/lib/fields/schema";
+import { removeImages } from "@/lib/images/storage";
 import { parseCollection, parseFields } from "@/lib/queries/parse";
 import { createClient } from "@/lib/supabase/server";
-import type { Json } from "@/types/database";
 
 /** Loads the collection and its fields (RLS-scoped) and builds the validator for its entries. */
 async function loadValidator(collectionId: string) {
@@ -21,62 +21,6 @@ async function loadValidator(collectionId: string) {
   const collection = parseCollection(collectionRow);
   const fields = parseFields(fieldRows ?? []);
   return { error: null, collection, schema: buildEntrySchema(collection, fields), supabase } as const;
-}
-
-type Supabase = Awaited<ReturnType<typeof createClient>>;
-
-/**
- * Turns the form's cover state into the columns to store. Downloads a remote
- * image into the bucket when `source_url` is set. Returns an error message on failure.
- */
-async function resolveCover(
-  supabase: Supabase,
-  user: CurrentUser,
-  cover: EntryFormOutput["cover"],
-): Promise<{ error: string } | { columns: CoverColumns }> {
-  let path = cover.path;
-  let source = cover.image_source;
-
-  if (path && !path.startsWith(`${user.id}/`)) return { error: "That image does not belong to you." };
-
-  if (cover.source_url) {
-    try {
-      path = await storeImageFromUrl(supabase, user.id, cover.source_url);
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : "Could not download the image." };
-    }
-    source = cover.image_source === "provider" ? "provider" : "url";
-  }
-
-  if (!path) return { columns: { cover_image_path: null, image_source: null, external_provider: null, external_id: null } };
-  return {
-    columns: {
-      cover_image_path: path,
-      image_source: source ?? "upload",
-      external_provider: cover.external_provider,
-      external_id: cover.external_provider ? cover.external_id : null,
-    },
-  };
-}
-
-type CoverColumns = {
-  cover_image_path: string | null;
-  image_source: "upload" | "url" | "provider" | null;
-  external_provider: string | null;
-  external_id: string | null;
-};
-
-function entryColumns(v: EntryFormOutput) {
-  return {
-    title: v.title,
-    status: v.status,
-    rating: v.rating,
-    occurred_on: v.occurred_on,
-    notes: v.notes || null,
-    tags: v.tags,
-    is_favorite: v.is_favorite,
-    attributes: v.attributes as Json,
-  };
 }
 
 function revalidateEntries() {
@@ -93,7 +37,7 @@ export async function createEntry(collectionId: string, input: unknown): Promise
   const parsed = ctx.schema.safeParse(input);
   if (!parsed.success) return fromZod(parsed.error);
 
-  const cover = await resolveCover(ctx.supabase, user, parsed.data.cover);
+  const cover = await resolveCover(ctx.supabase, user.id, parsed.data.cover);
   if ("error" in cover) return fail(cover.error, { "cover.source_url": cover.error });
 
   const { data, error } = await ctx.supabase
@@ -128,7 +72,7 @@ export async function updateEntry(collectionId: string, entryId: string, input: 
   if (loadError) return dbFail("Saving the entry", loadError);
   if (!existing) return fail("Entry not found.");
 
-  const cover = await resolveCover(ctx.supabase, user, parsed.data.cover);
+  const cover = await resolveCover(ctx.supabase, user.id, parsed.data.cover);
   if ("error" in cover) return fail(cover.error, { "cover.source_url": cover.error });
 
   const { error } = await ctx.supabase

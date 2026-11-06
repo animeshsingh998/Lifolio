@@ -13,6 +13,7 @@ import { LookupDialog } from "./lookup-dialog";
 import { StarRatingInput } from "./star-rating";
 import { TagInput } from "./tag-input";
 import { FieldInput } from "@/components/fields/registry";
+import { coerceForField } from "@/lib/fields/coerce";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -31,30 +32,6 @@ type EntryFormProps = {
   entry?: Entry;
   lookup: LookupProviderInfo | null;
 };
-
-/** Coerce a provider value into what the field's input expects; null when it does not fit. */
-function coerceForField(field: CollectionField, raw: unknown): unknown {
-  if (raw === null || raw === undefined || raw === "") return null;
-  switch (field.type) {
-    case "number": {
-      const n = typeof raw === "number" ? raw : Number(raw);
-      return Number.isFinite(n) ? n : null;
-    }
-    case "checkbox":
-      return raw === true;
-    case "select": {
-      const s = String(raw);
-      const match = field.options.choices?.find((c) => c.toLowerCase() === s.toLowerCase());
-      return match ?? null;
-    }
-    case "date":
-      return typeof raw === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : null;
-    case "image":
-      return null;
-    default:
-      return String(raw).slice(0, field.type === "textarea" ? 5000 : 500);
-  }
-}
 
 export function EntryForm({ collection, fields, entry, lookup }: EntryFormProps) {
   const router = useRouter();

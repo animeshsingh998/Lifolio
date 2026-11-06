@@ -5,7 +5,7 @@ Newest first.
 
 ## 2026-11-06 — Phase 3.1 images & lookup (code complete, not yet tested by owner)
 - Fixed: the "new entry" form reopened pre-filled. Cache Components keeps the last 3 routes mounted (React Activity), so the form is now re-seeded from server data on every reveal and after a successful create.
-- Approved next: bulk JSON import (PLAN 3.2) — ratings out of 5, defaults Watched / Finished, with a review step.
+- Bulk JSON import (PLAN 3.2) built: `/collections/[slug]/import`. Chunked resolve (10) and import (4) driven by the browser; year-aware match ranking; duplicate and weak-match flags; extra JSON keys fill custom fields by label.
 - Migration `0003_storage.sql` applied to the remote project with `npx supabase db push --remote --yes`.
 - Providers: TMDB movies/TV (v3 key or v4 token), Books = Google Books when `GOOGLE_BOOKS_API_KEY` is set, else Open Library (Google returns 429 for unkeyed requests from the owner's network). Brave Image Search reserved, not built.
 - Entry form: "Find" button + cover control (search / upload / URL / remove). Server downloads remote images into the bucket on save; signed URLs (1 h) on read.

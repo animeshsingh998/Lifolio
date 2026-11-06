@@ -61,3 +61,21 @@ Storage migration 0003 is already applied.
 10. **Errors**: with the network off, search shows "search failed, try again" rather than hanging.
 11. **Isolation**: a signed URL copied from one account does not work after it expires (1 h), and another
     account never sees the file.
+
+## Phase 3.2 — Bulk import
+
+1. On a collection page click the **JSON** icon (next to the gear) → import page. Click **Use example**,
+   check the summary says "2 items recognised", pick ratings scale 5 and default status Watched.
+2. **Find matches** → progress, then the review list: each row shows your title, a poster, the matched
+   title with year in a dropdown, and a "check" badge on doubtful matches. Change one row to its second
+   candidate; untick one row.
+3. **Import** → progress bar → summary with links to the created entries. Open one: cover, year, director filled;
+   rating converted (4 → 4 stars, 4.5 → 4½); status Watched.
+4. Run the same list again → both rows show **exists** and are unticked by default.
+5. Paste a list with a typo title ("Arrivle") → "no match" badge; with the "create unmatched" box ticked it is
+   created as a plain entry, with it unticked it is skipped.
+6. Books: a list with `{"title":"Dune","year":1965}` and an ISBN-only item → both match.
+7. Watches (no provider): `[{"title":"Submariner","Brand":"Rolex","rating":5}]` → review shows no search,
+   import fills the Brand field. Leaving Brand out → row fails with "Brand is required" (it is a required field).
+8. Paste 60 items → batches run without errors; **Stop** mid-way leaves the already-created ones in place.
+9. Bad input: `{"a":1}` and `[1,2]` show clear messages and the button stays disabled.

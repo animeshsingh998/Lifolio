@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Plus, Settings2 } from "lucide-react";
+import { FileJson, Plus, Settings2 } from "lucide-react";
 import { CollectionIcon } from "@/components/collections/collection-icon";
 import { EntriesView } from "@/components/entries/entries-view";
 import { PageHeader } from "@/components/layout/page-header";
@@ -37,6 +37,9 @@ export default async function CollectionPage({ params }: Props) {
         description={collection.description ?? undefined}
         actions={
           <>
+            <Button variant="outline" size="icon" aria-label="Import from JSON" title="Import from JSON" nativeButton={false} render={<Link href={`/collections/${slug}/import`} />}>
+              <FileJson />
+            </Button>
             <Button variant="outline" size="icon" aria-label="Collection settings" nativeButton={false} render={<Link href={`/collections/${slug}/settings`} />}>
               <Settings2 />
             </Button>

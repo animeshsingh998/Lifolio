@@ -16,6 +16,12 @@ type EntriesViewProps = { collection: Collection; fields: CollectionField[]; ent
 
 export function EntriesView({ collection, fields, entries }: EntriesViewProps) {
   const [layout, setLayout] = useState<Layout>(collection.default_layout);
+  // The page may be revived by Activity after the default changed in settings; follow the server value.
+  const [seenDefault, setSeenDefault] = useState(collection.default_layout);
+  if (seenDefault !== collection.default_layout) {
+    setSeenDefault(collection.default_layout);
+    setLayout(collection.default_layout);
+  }
 
   function changeLayout(next: Layout) {
     setLayout(next);

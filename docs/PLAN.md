@@ -63,7 +63,15 @@ Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Sto
 - Deferred: generic image search for watches / shoes etc. — **Brave Image Search** (`brave_images`, env `BRAVE_SEARCH_API_KEY`); decided 2026-11-06 to add later if needed. Google's image API is closed to new customers. Until then: upload or paste a URL.
 - Deferred: `image` custom field type (extra photos) and server-side resize/WebP conversion.
 
-### 3.2 Browsing
+### 3.2 Bulk import from JSON (approved 2026-11-06, next up)
+- Input: JSON array of `{ title | name, rating?, year?, status?, date?, tags?, notes?, <custom field label>? }`; ratings out of 5 (auto-detect, overridable)
+- Phase A "resolve": chunked provider search → review table (match, year, thumbnail, weak-match flag, duplicates, unmatched); rows can be unticked or switched to another result
+- Phase B "import": browser sends approved rows 5 at a time → details + cover + insert; progress, retry failures
+- Defaults per collection: status (Movies/TV → Watched, Books → Finished); option to create unmatched titles without metadata
+- Collections without a provider: plain bulk insert
+- [ ] parser + tests · [ ] `resolveImport` / `importEntries` actions · [ ] `/collections/[slug]/import` page
+
+### 3.3 Browsing
 - [ ] Search, filters (status, tags, rating, select fields), sorting via URL params
 - [ ] Pagination past 500 entries
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch, type Path } from "react-hook-form";
@@ -68,6 +68,13 @@ export function EntryForm({ collection, fields, entry, lookup }: EntryFormProps)
   });
   const errors = form.formState.errors;
   const title = useWatch({ control: form.control, name: "title" });
+
+  // Cache Components keeps recently visited pages mounted (React Activity), so this
+  // form would otherwise reappear with its last values. Effects re-run each time the
+  // page is shown again, so re-seed from the server's data on every reveal.
+  useEffect(() => {
+    form.reset(entryDefaults(fields, entry));
+  }, [form, fields, entry]);
   const backHref = entry ? `/collections/${collection.slug}/${entry.id}` : `/collections/${collection.slug}`;
 
   function applyLookup(result: LookupResult) {
@@ -108,6 +115,8 @@ export function EntryForm({ collection, fields, entry, lookup }: EntryFormProps)
         return;
       }
       toast.success(entry ? "Saved" : `Added to ${collection.name}`);
+      // Start the next visit of this (preserved) page from a clean form.
+      if (!entry) form.reset(entryDefaults(fields));
       router.push(entry ? backHref : `/collections/${collection.slug}/${result.data!.id}`);
     });
   });

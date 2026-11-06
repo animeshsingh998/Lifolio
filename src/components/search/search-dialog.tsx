@@ -8,7 +8,7 @@ import { quickSearch, type QuickHit } from "@/actions/search";
 import { CollectionIcon } from "@/components/collections/collection-icon";
 import { StatusBadge } from "@/components/entries/status-badge";
 import { Button } from "@/components/ui/button";
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
+import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import type { CollectionSummary } from "@/types/domain";
@@ -113,65 +113,68 @@ function SearchDialog({ open, onOpenChange, collections }: SearchDialogProps) {
 
   return (
     <CommandDialog open={open} onOpenChange={handleOpenChange} title="Search" description="Search your collections and entries" className="sm:max-w-xl">
-      <CommandInput value={query} onValueChange={onQueryChange} placeholder="Search everything…" autoFocus />
-      <CommandList>
-        {nothing ? <CommandEmpty>No results for “{q}”.</CommandEmpty> : null}
-        {error ? <p className="px-3 py-4 text-center text-sm text-destructive">{error}</p> : null}
-        {!searching && !error ? (
-          <p className="px-3 pt-3 pb-1 text-xs text-muted-foreground">Type at least {MIN_QUERY} characters to search entries by title, notes or tag.</p>
-        ) : null}
+      {/* The Base UI CommandDialog does not add the cmdk root itself; items need it for their store. */}
+      <Command shouldFilter={false} loop>
+        <CommandInput value={query} onValueChange={onQueryChange} placeholder="Search everything…" autoFocus />
+        <CommandList>
+          {nothing ? <CommandEmpty>No results for “{q}”.</CommandEmpty> : null}
+          {error ? <p className="px-3 py-4 text-center text-sm text-destructive">{error}</p> : null}
+          {!searching && !error ? (
+            <p className="px-3 pt-3 pb-1 text-xs text-muted-foreground">Type at least {MIN_QUERY} characters to search entries by title, notes or tag.</p>
+          ) : null}
 
-        {matchedCollections.length > 0 ? (
-          <CommandGroup heading={q ? "Collections" : "Jump to"}>
-            {matchedCollections.map((c) => (
-              <CommandItem key={c.id} value={`collection:${c.slug}`} onSelect={() => go(`/collections/${c.slug}`)}>
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
-                  <CollectionIcon name={c.icon} className="size-4" />
-                </span>
-                <span className="truncate">{c.name}</span>
-                <span className="ml-auto text-xs text-muted-foreground">{c.entry_count}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        ) : null}
-
-        {searching && (loading || hits.length > 0) ? (
-          <>
-            {matchedCollections.length > 0 ? <CommandSeparator /> : null}
-            <CommandGroup heading={loading && hits.length === 0 ? "Searching…" : "Entries"}>
-              {loading && hits.length === 0 ? (
-                <div className="flex items-center justify-center py-4 text-muted-foreground">
-                  <Loader2 className="size-4 animate-spin" />
-                </div>
-              ) : null}
-              {hits.map((h) => (
-                <CommandItem key={h.id} value={`entry:${h.id}`} onSelect={() => go(`/collections/${h.collection.slug}/${h.id}`)}>
-                  <span className="relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
-                    {h.cover_url ? (
-                      <Image src={h.cover_url} alt="" fill sizes="32px" className="object-cover" />
-                    ) : (
-                      <CollectionIcon name={h.collection.icon} className="size-4 text-muted-foreground" />
-                    )}
+          {matchedCollections.length > 0 ? (
+            <CommandGroup heading={q ? "Collections" : "Jump to"}>
+              {matchedCollections.map((c) => (
+                <CommandItem key={c.id} value={`collection:${c.slug}`} onSelect={() => go(`/collections/${c.slug}`)}>
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
+                    <CollectionIcon name={c.icon} className="size-4" />
                   </span>
-                  <span className="flex min-w-0 flex-col">
-                    <span className="truncate">{h.title}</span>
-                    <span className="truncate text-xs text-muted-foreground">{h.collection.name}</span>
-                  </span>
-                  <span className="ml-auto flex shrink-0 items-center gap-2">
-                    <StatusBadge options={h.collection.status_options} status={h.status} className="hidden sm:inline-flex" />
-                  </span>
+                  <span className="truncate">{c.name}</span>
+                  <span className="ml-auto text-xs text-muted-foreground">{c.entry_count}</span>
                 </CommandItem>
               ))}
-              {!loading ? (
-                <CommandItem value="all-results" onSelect={() => go(`/search?q=${encodeURIComponent(q)}`)} className="text-muted-foreground">
-                  <ArrowRight />
-                  See all results for “{q}”
-                </CommandItem>
-              ) : null}
             </CommandGroup>
-          </>
-        ) : null}
-      </CommandList>
+          ) : null}
+
+          {searching && (loading || hits.length > 0) ? (
+            <>
+              {matchedCollections.length > 0 ? <CommandSeparator /> : null}
+              <CommandGroup heading={loading && hits.length === 0 ? "Searching…" : "Entries"}>
+                {loading && hits.length === 0 ? (
+                  <div className="flex items-center justify-center py-4 text-muted-foreground">
+                    <Loader2 className="size-4 animate-spin" />
+                  </div>
+                ) : null}
+                {hits.map((h) => (
+                  <CommandItem key={h.id} value={`entry:${h.id}`} onSelect={() => go(`/collections/${h.collection.slug}/${h.id}`)}>
+                    <span className="relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
+                      {h.cover_url ? (
+                        <Image src={h.cover_url} alt="" fill sizes="32px" className="object-cover" />
+                      ) : (
+                        <CollectionIcon name={h.collection.icon} className="size-4 text-muted-foreground" />
+                      )}
+                    </span>
+                    <span className="flex min-w-0 flex-col">
+                      <span className="truncate">{h.title}</span>
+                      <span className="truncate text-xs text-muted-foreground">{h.collection.name}</span>
+                    </span>
+                    <span className="ml-auto flex shrink-0 items-center gap-2">
+                      <StatusBadge options={h.collection.status_options} status={h.status} className="hidden sm:inline-flex" />
+                    </span>
+                  </CommandItem>
+                ))}
+                {!loading ? (
+                  <CommandItem value="all-results" onSelect={() => go(`/search?q=${encodeURIComponent(q)}`)} className="text-muted-foreground">
+                    <ArrowRight />
+                    See all results for “{q}”
+                  </CommandItem>
+                ) : null}
+              </CommandGroup>
+            </>
+          ) : null}
+        </CommandList>
+      </Command>
     </CommandDialog>
   );
 }

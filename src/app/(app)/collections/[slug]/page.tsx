@@ -5,10 +5,11 @@ import { CollectionIcon } from "@/components/collections/collection-icon";
 import { EntriesView } from "@/components/entries/entries-view";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
+import { parseEntryFilters, type SearchParamsInput } from "@/lib/entries/filters";
 import { getCollectionBySlug, getCollectionFields } from "@/lib/queries/collections";
-import { listEntries } from "@/lib/queries/entries";
+import { listCollectionTags, listEntries } from "@/lib/queries/entries";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<SearchParamsInput> };
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -16,12 +17,14 @@ export async function generateMetadata({ params }: Props) {
   return { title: collection?.name ?? "Collection" };
 }
 
-export default async function CollectionPage({ params }: Props) {
-  const { slug } = await params;
+export default async function CollectionPage({ params, searchParams }: Props) {
+  const [{ slug }, sp] = await Promise.all([params, searchParams]);
   const collection = await getCollectionBySlug(slug);
   if (!collection) notFound();
 
-  const [fields, entries] = await Promise.all([getCollectionFields(collection.id), listEntries(collection.id)]);
+  const fields = await getCollectionFields(collection.id);
+  const filters = parseEntryFilters(sp, collection, fields);
+  const [page, tags] = await Promise.all([listEntries(collection.id, filters), listCollectionTags(collection.id)]);
 
   return (
     <>
@@ -49,7 +52,7 @@ export default async function CollectionPage({ params }: Props) {
           </>
         }
       />
-      <EntriesView collection={collection} fields={fields} entries={entries} />
+      <EntriesView collection={collection} fields={fields} page={page} tags={tags} filters={filters} />
     </>
   );
 }

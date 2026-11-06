@@ -118,6 +118,7 @@ create table entries (
 create index on entries (user_id, collection_id, updated_at desc);
 create index on entries (user_id, occurred_on desc);
 create index on entries using gin (tags);
+create index on entries using gin (title extensions.gin_trgm_ops);  -- 0004, ilike search
 -- add later only if needed: gin (attributes jsonb_path_ops), tsvector for search
 
 -- 5. activity_log: feeds Dashboard "recent activity" and Timeline (Phase 4)
@@ -246,11 +247,15 @@ Everything else is derived from the registry plus the rows in `collection_fields
   its entries. `EntryCard` (grid) and `EntryRow` (list) show title, cover, status, rating
   and the fields flagged `show_in_card`. `/collections/[slug]/[entryId]` shows all fields
   through `fieldTypes[f.type].Display`.
-- **Search / filter / sort:** URL search params (`?q=&status=&tag=&sort=`) drive the
-  server query. Search is `title ilike` plus `notes ilike` in v1. Filters on promoted
-  columns are plain `.eq()`; filters on custom fields use PostgREST JSON paths
-  (`attributes->>f_genre`), sorting too (`order('attributes->>f_year')`). This is good
-  enough for thousands of entries; a full-text column can be added later.
+- **Search / filter / sort:** URL search params (`?q=&status=&rating=&fav=&tag=&f.<key>=&sort=&page=`)
+  are parsed and validated against the collection by `src/lib/entries/filters.ts` (pure, shared
+  by the page and the filter bar) and drive the server query in `listEntries`. Search is
+  `title ilike` / `notes ilike` / exact tag (`or=` clause, backed by a `pg_trgm` index);
+  status / rating / favourite are plain column filters; tags use array containment and
+  select-field filters use JSONB containment (`attributes @> {"f_genre":"Drama"}`).
+  Sorting is on promoted columns only (updated, created, title, rating, date); pages are 60
+  rows via `.range()` with an exact count. Global search reuses the same `or=` clause across
+  all collections (RLS scopes it) for the Ctrl K palette and `/search`.
 - **Templates:** `templates.ts` holds Movies, TV Shows, Books, Watches, Shoes as plain
   objects (name, icon, status options, date label, field list). "New collection" offers
   "Start from template" or "Blank"; either way it just inserts into `collections` and

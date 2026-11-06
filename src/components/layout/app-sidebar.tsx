@@ -18,6 +18,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { CollectionIcon } from "@/components/collections/collection-icon";
+import { SidebarSearchButton } from "@/components/search/search-dialog";
 import { UserMenu } from "@/components/layout/user-menu";
 import type { CurrentUser } from "@/lib/auth";
 import { SITE_NAME } from "@/lib/site";
@@ -54,6 +55,9 @@ export function AppSidebar({ user, collections }: AppSidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarSearchButton />
+              </SidebarMenuItem>
               {NAV.map((item) => {
                 const active =
                   "exact" in item && item.exact

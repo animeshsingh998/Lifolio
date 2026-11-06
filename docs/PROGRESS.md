@@ -3,6 +3,13 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-06 — Phase 3.3 browsing & global search (code complete, not yet tested by owner)
+- Owner confirmed Phase 3.2 import and the form-reset fix work.
+- Collection pages: filter bar (search, status, rating, select fields, tags, favourites) + sort + pagination, all in the URL so views are shareable and survive back/forward. `listEntries` now takes parsed filters and returns `{ entries, total }`.
+- Global search: Ctrl/⌘ K palette anywhere in the app (sidebar "Search" item, icon in the mobile header) backed by the `quickSearch` Server Action; `/search?q=` shows full results grouped by collection.
+- Migration `0004_search.sql` (trigram index on titles, `collection_tag_counts` RPC) applied with `npx supabase db push --remote --yes`.
+- Added shadcn `command` (cmdk) and `input-group`.
+
 ## 2026-11-06 — Phase 3.1 images & lookup (code complete, not yet tested by owner)
 - Fixed: the "new entry" form reopened pre-filled. Cache Components keeps the last 3 routes mounted (React Activity), so the form is now re-seeded from server data on every reveal and after a successful create.
 - Bulk JSON import (PLAN 3.2) built: `/collections/[slug]/import`. Chunked resolve (10) and import (4) driven by the browser; year-aware match ranking; duplicate and weak-match flags; extra JSON keys fill custom fields by label.
@@ -40,7 +47,7 @@ Newest first.
 - Local toolchain: Node 24.19.0 via nvm-windows. `gh`, `vercel`, `supabase` CLIs are not installed.
 
 ## Owner to-do
-1. Go through `docs/TESTING.md` Phase 2 and Phase 3 and report anything broken.
+1. Go through `docs/TESTING.md` Phase 3.1 and Phase 3.3 and report anything broken.
 2. Vercel: import the GitHub repo, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_ALLOW_SIGNUP`, `NEXT_PUBLIC_SITE_URL`, `CRON_SECRET` (any long random string).
 3. Supabase → Authentication → URL Configuration: add the Vercel URL's `/auth/confirm` to Redirect URLs.
 4. Add `TMDB_API_KEY` (and optionally `GOOGLE_BOOKS_API_KEY`) to the Vercel project too.

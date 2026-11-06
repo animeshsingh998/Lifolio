@@ -71,9 +71,13 @@ Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Sto
 - Collections without a provider: plain bulk insert
 - [x] parser + tests · [x] `resolveImportBatch` / `importEntryBatch` actions · [x] `/collections/[slug]/import` wizard (paste → review → progress → summary, retry failed)
 
-### 3.3 Browsing
-- [ ] Search, filters (status, tags, rating, select fields), sorting via URL params
-- [ ] Pagination past 500 entries
+### 3.3 Browsing (code complete 2026-11-06, awaiting owner test)
+- [x] Per-collection filter bar: search (title / notes / tag), status, minimum rating, select fields, tags (with counts), favourites, sort — all URL params (`src/lib/entries/filters.ts`, unit-tested)
+- [x] Pagination, 60 per page (`?page=`), with "nothing on this page / clear filters" states
+- [x] Global search: Ctrl/⌘ K palette (collections + entries, debounced Server Action) and `/search?q=` results page grouped by collection
+- [x] `0004_search.sql`: `pg_trgm` index on `entries.title`, `collection_tag_counts()` RPC; applied remotely
+- [ ] Owner: test per `TESTING.md` Phase 3.3
+- Later if needed: number-field sorting, "checked" filter for checkbox fields, saved views
 
 ## Phase 4 — Dashboard, timeline, export
 - [ ] Dashboard: stats per collection, recently added, in-progress, recent activity (from `activity_log`)

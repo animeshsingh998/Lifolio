@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppShellSkeleton } from "@/components/layout/app-shell-skeleton";
+import { SearchDialogProvider, SearchIconButton } from "@/components/search/search-dialog";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { requireUser } from "@/lib/auth";
@@ -24,15 +25,18 @@ async function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
-      <AppSidebar user={user} collections={collections} />
-      <SidebarInset>
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4 md:hidden">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <span className="text-sm font-medium">Lifolio</span>
-        </header>
-        <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">{children}</div>
-      </SidebarInset>
+      <SearchDialogProvider collections={collections}>
+        <AppSidebar user={user} collections={collections} />
+        <SidebarInset>
+          <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4 md:hidden">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <span className="text-sm font-medium">Lifolio</span>
+            <SearchIconButton className="ml-auto" />
+          </header>
+          <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">{children}</div>
+        </SidebarInset>
+      </SearchDialogProvider>
     </SidebarProvider>
   );
 }

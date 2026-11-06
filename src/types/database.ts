@@ -188,6 +188,10 @@ export type Database = {
         Args: { p_collection_id: string; p_key: string };
         Returns: undefined;
       };
+      collection_tag_counts: {
+        Args: { p_collection_id: string };
+        Returns: { tag: string; count: number }[];
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

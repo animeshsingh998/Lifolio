@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { QuickRating, QuickStatus } from "./quick-controls";
+import { QuickEdit, QuickRating, QuickStatus } from "./quick-controls";
 import { FieldDisplay } from "@/components/fields/registry";
 import { formatDate } from "@/lib/fields/definitions";
 import type { Collection, CollectionField, Entry } from "@/types/domain";
@@ -13,7 +13,7 @@ export function EntryRow({ collection, fields, entry }: EntryRowProps) {
   const cardFields = fields.filter((f) => f.show_in_card).slice(0, 3);
   return (
     <div
-      className="relative grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-4 py-3 transition-colors hover:bg-muted/50 has-[a:focus-visible]:bg-muted/50 sm:grid-cols-[minmax(0,2fr)_repeat(var(--cols),minmax(0,1fr))_auto_auto]"
+      className="group relative grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-4 py-3 transition-colors hover:bg-muted/50 has-[a:focus-visible]:bg-muted/50 sm:grid-cols-[minmax(0,2fr)_repeat(var(--cols),minmax(0,1fr))_auto_auto]"
       style={{ "--cols": cardFields.length } as React.CSSProperties}
     >
       <Link href={`/collections/${collection.slug}/${entry.id}`} aria-label={entry.title} className="absolute inset-0 z-0 focus-visible:outline-none" />
@@ -43,6 +43,7 @@ export function EntryRow({ collection, fields, entry }: EntryRowProps) {
           <span className="pointer-events-none hidden text-xs text-muted-foreground md:block">{formatDate(entry.occurred_on)}</span>
         ) : null}
         <QuickStatus entryId={entry.id} status={entry.status} options={collection.status_options} />
+        <QuickEdit href={`/collections/${collection.slug}/${entry.id}/edit`} className="size-6" />
       </span>
     </div>
   );

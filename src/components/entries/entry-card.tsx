@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { QuickRating, QuickStatus } from "./quick-controls";
+import { QuickEdit, QuickRating, QuickStatus } from "./quick-controls";
 import { CollectionIcon } from "@/components/collections/collection-icon";
 import { FieldDisplay } from "@/components/fields/registry";
 import { formatDate } from "@/lib/fields/definitions";
@@ -36,6 +36,9 @@ export function EntryCard({ collection, fields, entry }: EntryCardProps) {
         ) : null}
         <span className="pointer-events-auto absolute bottom-2 left-2 z-10">
           <QuickStatus entryId={entry.id} status={entry.status} options={collection.status_options} />
+        </span>
+        <span className="pointer-events-auto absolute top-2 left-2 z-10">
+          <QuickEdit href={`/collections/${collection.slug}/${entry.id}/edit`} />
         </span>
       </div>
 

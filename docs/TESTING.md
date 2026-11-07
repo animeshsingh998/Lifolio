@@ -140,3 +140,4 @@ Migration 0005 is already applied.
 4. A card field holding a year (Release year, Published) shows "2003", not "2,003"; a number with a unit still
    shows the unit ("148 min").
 5. Keyboard: Tab reaches the card link, the status chip and the stars in turn; Enter opens the menu / sets a rating.
+6. Hover a card → a small pencil appears top-left (on a row: far right) → opens the edit page directly. On a phone it is always visible.

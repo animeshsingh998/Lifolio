@@ -1,12 +1,14 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { ChevronDown, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { setEntryRating, setEntryStatus } from "@/actions/entries";
 import { StarRatingInput, Stars } from "./star-rating";
 import { statusOf } from "./status-badge";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -101,5 +103,27 @@ export function QuickRating({ entryId, rating, className, starClassName }: Quick
         <StarRatingInput value={current} onChange={change} compact starClassName={starClassName} />
       </span>
     </span>
+  );
+}
+
+type QuickEditProps = { href: string; className?: string };
+
+/** Pencil shortcut to the edit page. Hidden until the card is hovered (always visible on touch screens). */
+export function QuickEdit({ href, className }: QuickEditProps) {
+  return (
+    <Button
+      variant="secondary"
+      size="icon-sm"
+      aria-label="Edit"
+      title="Edit"
+      nativeButton={false}
+      render={<Link href={href} />}
+      className={cn(
+        "rounded-full shadow-sm opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100",
+        className,
+      )}
+    >
+      <Pencil />
+    </Button>
   );
 }

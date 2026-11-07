@@ -3,6 +3,12 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-07 — Public share links (owner request)
+- Share button on a collection page → link valid 1 h / 6 h / 1 d / 7 d; dialog lists active links with Revoke. Only the SHA-256 of the token is stored.
+- `/s/<token>`: read-only collection (filters, sort, pagination, grid/list) and `/s/<token>/<entryId>` detail, no login. Served by the security-definer `shared_collection()` function (hash + expiry + revoke checks); covers signed through a storage policy limited to currently shared collections. No service-role key.
+- Verified anonymously against the live API: bogus token → null; direct reads of entries/shares → 0 rows; signing an unshared cover → refused.
+- Refactor: `EntryDetail` shared by the app and the public page; `EntryCard` / `EntryRow` / `EntriesView` take `readOnly` + `basePath`.
+
 ## 2026-11-07 — Quick actions (owner request)
 - Sidebar **Quick add**: dialog listing collections → straight to that collection's new-entry form.
 - Cards and rows: status chip opens a menu to change status in place; stars become a picker on hover (click sets, click again clears). New actions `setEntryStatus` / `setEntryRating` (status validated against the collection). Cards now use an overlay link so the controls are not nested inside the anchor.

@@ -141,3 +141,23 @@ Migration 0005 is already applied.
    shows the unit ("148 min").
 5. Keyboard: Tab reaches the card link, the status chip and the stars in turn; Enter opens the menu / sets a rating.
 6. Hover a card → a small pencil appears top-left (on a row: far right) → opens the edit page directly. On a phone it is always visible.
+
+## Share links (2026-11-07)
+
+Migration 0006 is already applied.
+
+1. On a collection page click the **share** icon (left of the JSON icon) → dialog. Pick "1 hour", **Create link** →
+   a link appears with a copy button; the note says it is shown only once. Copy it.
+2. Open the link in a **private/incognito window** (no login): the collection shows with a "Shared view" badge, the
+   expiry ("Link expires in 1 h"), the grid/list toggle, the filter bar, sort and pagination. No Add button, no
+   pencil, no status/rating controls; covers load. Click an entry → read-only detail page; back link returns to the
+   shared list.
+3. In the private window try `/collections` and `/dashboard` → redirected to login as before.
+4. Change a filter in the private window → URL updates, list narrows; the grid/list toggle works but is not saved.
+5. Back in your account: the dialog lists the link under **Active links**; click **Revoke** → reload the private
+   window → "This link is no longer available".
+6. Create a 7-day link, then another → both listed. Change one character of the token in the URL → unavailable page,
+   no error screen.
+7. Share a collection with zero entries → "This collection has no entries", no Add button.
+8. Isolation: the shared page never shows other collections, your email, or any way to edit; deleting the collection
+   makes its links unavailable.

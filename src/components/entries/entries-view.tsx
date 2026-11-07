@@ -24,9 +24,13 @@ type EntriesViewProps = {
   page: EntryPage;
   tags: TagCount[];
   filters: EntryFilters;
+  /** Public share view: no add button, no quick controls, layout choice not persisted. */
+  readOnly?: boolean;
+  /** Where entry links point; defaults to the collection page. */
+  basePath?: string;
 };
 
-export function EntriesView({ collection, fields, page, tags, filters }: EntriesViewProps) {
+export function EntriesView({ collection, fields, page, tags, filters, readOnly = false, basePath }: EntriesViewProps) {
   const pathname = usePathname();
   const [pending, setPending] = useState(false);
   const [layout, setLayout] = useState<Layout>(collection.default_layout);
@@ -39,7 +43,7 @@ export function EntriesView({ collection, fields, page, tags, filters }: Entries
 
   function changeLayout(next: Layout) {
     setLayout(next);
-    void setCollectionLayout(collection.id, next); // persist; failure just means the toggle resets next visit
+    if (!readOnly) void setCollectionLayout(collection.id, next); // persist; failure just means the toggle resets next visit
   }
 
   const { entries, total } = page;
@@ -50,11 +54,13 @@ export function EntriesView({ collection, fields, page, tags, filters }: Entries
       <EmptyState
         icon={() => <CollectionIcon name={collection.icon} className="size-6" />}
         title={`No ${collection.item_noun}s yet`}
-        description={`Add your first ${collection.item_noun} to start building this collection.`}
+        description={readOnly ? "This collection has no entries." : `Add your first ${collection.item_noun} to start building this collection.`}
         action={
-          <Button nativeButton={false} render={<Link href={`/collections/${collection.slug}/new`} />}>
-            <Plus /> Add {collection.item_noun}
-          </Button>
+          readOnly ? null : (
+            <Button nativeButton={false} render={<Link href={`/collections/${collection.slug}/new`} />}>
+              <Plus /> Add {collection.item_noun}
+            </Button>
+          )
         }
       />
     );
@@ -100,13 +106,13 @@ export function EntriesView({ collection, fields, page, tags, filters }: Entries
         ) : layout === "grid" ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {entries.map((e) => (
-              <EntryCard key={e.id} collection={collection} fields={fields} entry={e} />
+              <EntryCard key={e.id} collection={collection} fields={fields} entry={e} basePath={basePath} readOnly={readOnly} />
             ))}
           </div>
         ) : (
           <div className="divide-y overflow-hidden rounded-xl border bg-card">
             {entries.map((e) => (
-              <EntryRow key={e.id} collection={collection} fields={fields} entry={e} />
+              <EntryRow key={e.id} collection={collection} fields={fields} entry={e} basePath={basePath} readOnly={readOnly} />
             ))}
           </div>
         )}

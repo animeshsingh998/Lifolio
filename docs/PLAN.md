@@ -93,13 +93,13 @@ Brief §5: collection statistics, recently added, recent activity, quick access,
 - Empty states: no collections → current empty state; collections but no entries → tiles at 0 with a nudge to add or import
 - [x] migration `0005_dashboard.sql` applied · [x] queries · [x] components · [x] page + loading · [ ] Owner: test per `TESTING.md` Phase 4.1
 
-### 4.x Public share links (proposed 2026-11-07, awaiting decision)
+### 4.x Public share links (approved and built 2026-11-07, awaiting owner test)
 Owner: a Share button on a collection page → pick validity (1 h, 6 h, 1 d, 7 d) → link anyone can open without login; read-only, with filters and sorting.
 - DB `0006_shares.sql`: table `collection_shares (id, collection_id, user_id, token_hash, expires_at, revoked_at, created_at)`, owner-only RLS; security-definer RPC `shared_collection(p_token)` that checks hash + expiry + not revoked and returns the collection, its fields and its entries (capped) as JSON — the only anonymous read path; storage policy letting anon sign URLs only for covers of currently shared collections (no service-role key needed)
 - Server: `createShareLink` / `revokeShareLink` actions (24 random bytes, base64url; only the SHA-256 is stored), `listShareLinks`; `applyFilters(entries, filters)` pure helper (tests) so the public page reuses the same URL filter contract, in TypeScript
 - Routes: `/s/[token]` (own minimal layout: name, "shared from Lifolio", expires in …), grid/list + filter bar + sort + pagination, `/s/[token]/[entryId]` read-only detail; expired/revoked → friendly page; proxy allows `/s/*` unauthenticated
 - UI: Share dialog on the collection page (duration choice → link + copy button; list of active links with expiry and Revoke); cards/rows/entries view get a `readOnly` mode (no quick controls, no edit, links stay inside `/s/…`)
-- Estimate: ~750–850 lines, 11 new files, 7 modified; ~120–150k tokens including verification of the anonymous path
+- [x] migration `0006_shares.sql` applied · [x] actions + queries · [x] share dialog · [x] `/s/[token]` + detail + unavailable page · [x] read-only card/row/view · [ ] Owner: test per `TESTING.md`
 
 ### 4.2 Later in Phase 4
 - [ ] Timeline by `occurred_on` (month groups, reuses the filter bar idea)

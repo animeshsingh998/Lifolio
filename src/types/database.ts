@@ -67,6 +67,16 @@ type EntryRow = {
   updated_at: string;
 };
 
+type CollectionShareRow = {
+  id: string;
+  collection_id: string;
+  user_id: string;
+  token_hash: string;
+  expires_at: string;
+  revoked_at: string | null;
+  created_at: string;
+};
+
 type ActivityLogRow = {
   id: number;
   user_id: string;
@@ -181,6 +191,20 @@ export type Database = {
           },
         ];
       };
+      collection_shares: {
+        Row: CollectionShareRow;
+        Insert: InsertOf<CollectionShareRow, "id" | "revoked_at" | "created_at">;
+        Update: Partial<CollectionShareRow>;
+        Relationships: [
+          {
+            foreignKeyName: "collection_shares_collection_id_fkey";
+            columns: ["collection_id"];
+            isOneToOne: false;
+            referencedRelation: "collections";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -191,6 +215,14 @@ export type Database = {
       collection_tag_counts: {
         Args: { p_collection_id: string };
         Returns: { tag: string; count: number }[];
+      };
+      shared_collection: {
+        Args: { p_token_hash: string };
+        Returns: Json;
+      };
+      is_shared_cover: {
+        Args: { p_name: string };
+        Returns: boolean;
       };
       collection_stats: {
         Args: Record<string, never>;

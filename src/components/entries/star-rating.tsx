@@ -31,20 +31,23 @@ type StarRatingInputProps = {
   onChange: (value: number | null) => void;
   id?: string;
   disabled?: boolean;
+  /** Small inline variant for cards/rows: no label, no clear button. */
+  compact?: boolean;
+  starClassName?: string;
 };
 
 /** Interactive half-star picker. Click a half to set it; click the current value (or the ×) to clear. */
-export function StarRatingInput({ value, onChange, id, disabled }: StarRatingInputProps) {
+export function StarRatingInput({ value, onChange, id, disabled, compact, starClassName }: StarRatingInputProps) {
   const [hover, setHover] = useState<number | null>(null);
   const shown = hover ?? value ?? 0;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center", compact ? "gap-0" : "gap-2")}>
       <div
         id={id}
         role="radiogroup"
         aria-label="Rating"
-        className={cn("flex items-center", disabled && "pointer-events-none opacity-50")}
+        className={cn("flex items-center text-amber-500", compact && "gap-0.5", disabled && "pointer-events-none opacity-50")}
         onMouseLeave={() => setHover(null)}
       >
         {Array.from({ length: 5 }, (_, i) => {
@@ -53,10 +56,10 @@ export function StarRatingInput({ value, onChange, id, disabled }: StarRatingInp
           const filled = shown >= right;
           const half = !filled && shown === left;
           return (
-            <span key={i} className="relative size-7">
-              <Star className="pointer-events-none absolute inset-0 size-full p-0.5 text-muted-foreground/30" />
-              {filled ? <Star className="pointer-events-none absolute inset-0 size-full fill-current p-0.5 text-amber-500" /> : null}
-              {half ? <StarHalf className="pointer-events-none absolute inset-0 size-full fill-current p-0.5 text-amber-500" /> : null}
+            <span key={i} className={cn("relative", compact ? cn("size-4", starClassName) : "size-7")}>
+              <Star className={cn("pointer-events-none absolute inset-0 size-full text-muted-foreground/30", !compact && "p-0.5")} />
+              {filled ? <Star className={cn("pointer-events-none absolute inset-0 size-full fill-current", !compact && "p-0.5")} /> : null}
+              {half ? <StarHalf className={cn("pointer-events-none absolute inset-0 size-full fill-current", !compact && "p-0.5")} /> : null}
               {[left, right].map((v, half) => (
                 <button
                   key={v}
@@ -79,8 +82,8 @@ export function StarRatingInput({ value, onChange, id, disabled }: StarRatingInp
           );
         })}
       </div>
-      <span className="w-14 text-sm tabular-nums text-muted-foreground">{shown ? formatRating(shown) : "—"}</span>
-      {value !== null ? (
+      {compact ? null : <span className="w-14 text-sm tabular-nums text-muted-foreground">{shown ? formatRating(shown) : "—"}</span>}
+      {value !== null && !compact ? (
         <button
           type="button"
           onClick={() => onChange(null)}

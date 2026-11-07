@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { dbFail, fail, fromZod, ok, type ActionResult } from "@/lib/actions";
 import { requireUser } from "@/lib/auth";
 import { entryColumns, resolveCover } from "@/lib/entries/cover";
@@ -112,6 +113,44 @@ export async function deleteEntry(entryId: string): Promise<ActionResult> {
   if (error) return dbFail("Deleting the entry", error);
   if (!count) return fail("Entry not found.");
   await removeImages(supabase, [existing?.cover_image_path]);
+  revalidateEntries();
+  return ok(undefined);
+}
+
+const ratingSchema = z.number().int().min(0).max(10).nullable();
+
+/** Quick change from a card or row: rating only, no other column touched. */
+export async function setEntryRating(entryId: string, input: unknown): Promise<ActionResult> {
+  await requireUser();
+  const parsed = ratingSchema.safeParse(input);
+  if (!parsed.success) return fromZod(parsed.error);
+  const supabase = await createClient();
+  const { error, count } = await supabase.from("entries").update({ rating: parsed.data }, { count: "exact" }).eq("id", entryId);
+  if (error) return dbFail("Updating rating", error);
+  if (!count) return fail("Entry not found.");
+  revalidateEntries();
+  return ok(undefined);
+}
+
+/** Quick status change; the key must be one of the entry's collection statuses (or null). */
+export async function setEntryStatus(entryId: string, input: unknown): Promise<ActionResult> {
+  await requireUser();
+  const parsed = z.string().max(30).nullable().safeParse(input);
+  if (!parsed.success) return fromZod(parsed.error);
+  const supabase = await createClient();
+  const { data: entry, error: eErr } = await supabase.from("entries").select("collection_id").eq("id", entryId).maybeSingle();
+  if (eErr) return dbFail("Updating status", eErr);
+  if (!entry) return fail("Entry not found.");
+  if (parsed.data !== null) {
+    const { data: collectionRow, error: cErr } = await supabase.from("collections").select("*").eq("id", entry.collection_id).maybeSingle();
+    if (cErr) return dbFail("Updating status", cErr);
+    if (!collectionRow || !parseCollection(collectionRow).status_options.some((s) => s.key === parsed.data)) {
+      return fail("That status does not exist in this collection.");
+    }
+  }
+  const { error, count } = await supabase.from("entries").update({ status: parsed.data }, { count: "exact" }).eq("id", entryId);
+  if (error) return dbFail("Updating status", error);
+  if (!count) return fail("Entry not found.");
   revalidateEntries();
   return ok(undefined);
 }

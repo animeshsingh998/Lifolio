@@ -3,6 +3,11 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-07 — Quick actions (owner request)
+- Sidebar **Quick add**: dialog listing collections → straight to that collection's new-entry form.
+- Cards and rows: status chip opens a menu to change status in place; stars become a picker on hover (click sets, click again clears). New actions `setEntryStatus` / `setEntryRating` (status validated against the collection). Cards now use an overlay link so the controls are not nested inside the anchor.
+- Fixed number display: no digit grouping (years showed as "2,003").
+
 ## 2026-11-06 — Phase 4.1 dashboard (code complete, not yet tested by owner)
 - `/dashboard`: stat tiles, "Currently tracking" (statuses of kind active), "Recently added", per-collection stat cards with a status bar, recent activity feed from `activity_log`.
 - Migration `0005_dashboard.sql` (`collection_stats()` RPC) applied remotely. `src/lib/time.ts` relative time helper (tested).

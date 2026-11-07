@@ -18,6 +18,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { CollectionIcon } from "@/components/collections/collection-icon";
+import { QuickAddButton } from "@/components/collections/quick-add-dialog";
 import { SidebarSearchButton } from "@/components/search/search-dialog";
 import { UserMenu } from "@/components/layout/user-menu";
 import type { CurrentUser } from "@/lib/auth";
@@ -55,6 +56,9 @@ export function AppSidebar({ user, collections }: AppSidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <QuickAddButton collections={collections} />
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarSearchButton />
               </SidebarMenuItem>

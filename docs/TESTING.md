@@ -127,3 +127,16 @@ Migration 0005 is already applied.
 6. **Empty states**: a brand-new account sees "Nothing here yet"; an account with collections but no entries
    sees tiles at 0 plus Add / Import JSON buttons.
 7. **Mobile**: tiles 2×2, strips 2 per row, collections above the activity feed.
+
+## Quick actions (2026-11-07)
+
+1. Sidebar **Quick add** (red plus) → dialog with your collections → pick one → its "Add …" form opens. With the
+   sidebar collapsed the button still works and shows a tooltip.
+2. On a collection page (grid and list), click the **status chip** on an entry → menu with the collection's statuses
+   and "No status". Pick one → chip updates at once; reload → still changed; the dashboard activity feed shows
+   "… → Watched". The card itself still opens the entry when you click anywhere else.
+3. Hover the **stars** on a card or row → they turn into a picker; click a half or full star → saved immediately;
+   click the same value again → rating cleared. Collections with ratings turned off show no stars.
+4. A card field holding a year (Release year, Published) shows "2003", not "2,003"; a number with a unit still
+   shows the unit ("148 min").
+5. Keyboard: Tab reaches the card link, the status chip and the stars in turn; Enter opens the menu / sets a rating.

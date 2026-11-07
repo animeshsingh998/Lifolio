@@ -66,7 +66,9 @@ export const fieldDefinitions: Record<FieldType, FieldTypeDefinition> = {
         }, n.nullable())
         .refine(requiredCheck(f.required), requiredMessage(f.label));
     },
-    format: (v, o) => (typeof v === "number" ? `${v.toLocaleString()}${o.unit ? ` ${o.unit}` : ""}` : ""),
+    // No digit grouping: years ("2003") and ids must not become "2,003"; decimals keep up to 2 places.
+    format: (v, o) =>
+      typeof v === "number" ? `${v.toLocaleString(undefined, { useGrouping: false, maximumFractionDigits: 2 })}${o.unit ? ` ${o.unit}` : ""}` : "",
   },
 
   date: {

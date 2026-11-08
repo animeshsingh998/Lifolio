@@ -6,7 +6,7 @@ import { ChevronDown, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { setEntryRating, setEntryStatus } from "@/actions/entries";
 import { StarRatingInput, Stars } from "./star-rating";
-import { statusOf } from "./status-badge";
+import { statusChipClasses, statusOf } from "./status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,20 +18,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { StatusKind, StatusOption } from "@/types/domain";
+import type { StatusOption } from "@/types/domain";
 
-/** Same palette as StatusBadge, as a clickable chip. */
-const KIND_CLASSES: Record<StatusKind, string> = {
-  planned: "border-transparent bg-sky-500/15 text-sky-700 hover:bg-sky-500/25 dark:text-sky-300",
-  active: "border-transparent bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 dark:text-amber-300",
-  done: "border-transparent bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-300",
-  none: "border-transparent bg-muted text-muted-foreground hover:bg-muted/80",
-};
-
-type QuickStatusProps = { entryId: string; status: string | null; options: StatusOption[]; className?: string };
+type QuickStatusProps = { entryId: string; status: string | null; options: StatusOption[]; className?: string; onImage?: boolean };
 
 /** Status chip that opens a menu to change the status in place (optimistic). */
-export function QuickStatus({ entryId, status, options, className }: QuickStatusProps) {
+export function QuickStatus({ entryId, status, options, className, onImage }: QuickStatusProps) {
   const [, startTransition] = useTransition();
   const [current, setOptimistic] = useOptimistic(status);
   if (options.length === 0) return null;
@@ -53,7 +45,12 @@ export function QuickStatus({ entryId, status, options, className }: QuickStatus
         render={
           <Badge
             variant="outline"
-            className={cn("cursor-pointer gap-1 pr-1.5 select-none", KIND_CLASSES[option?.kind ?? "none"], !option && "border-dashed", className)}
+            className={cn(
+              "cursor-pointer gap-1 pr-1.5 select-none hover:brightness-95 dark:hover:brightness-110",
+              statusChipClasses(option?.kind ?? "none", onImage),
+              !option && "border-dashed",
+              className,
+            )}
           />
         }
         aria-label="Change status"

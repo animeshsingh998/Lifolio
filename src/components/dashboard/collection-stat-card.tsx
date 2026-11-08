@@ -34,7 +34,7 @@ export function CollectionStatCard({ collection, stats }: CollectionStatCardProp
   return (
     <Link
       href={`/collections/${collection.slug}`}
-      className="flex flex-col gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      className="flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
       <div className="flex items-center gap-3">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">

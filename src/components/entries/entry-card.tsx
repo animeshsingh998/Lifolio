@@ -45,11 +45,11 @@ export function EntryCard({ collection, fields, entry, basePath = `/collections/
           <Heart className="absolute top-2 right-2 size-4 fill-rose-500 text-rose-500" aria-label="Favourite" />
         ) : null}
         {readOnly ? (
-          entry.status ? <StatusBadge options={collection.status_options} status={entry.status} className="absolute bottom-2 left-2" /> : null
+          entry.status ? <StatusBadge options={collection.status_options} status={entry.status} onImage className="absolute bottom-2 left-2" /> : null
         ) : (
           <>
             <span className="pointer-events-auto absolute bottom-2 left-2 z-10">
-              <QuickStatus entryId={entry.id} status={entry.status} options={collection.status_options} />
+              <QuickStatus entryId={entry.id} status={entry.status} options={collection.status_options} onImage />
             </span>
             <span className="pointer-events-auto absolute top-2 left-2 z-10">
               <QuickEdit href={`${basePath}/${entry.id}/edit`} />

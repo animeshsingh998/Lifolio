@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, Search } from "lucide-react";
+import { ArrowRight, Loader2, Pencil, Search } from "lucide-react";
 import { quickSearch, type QuickHit } from "@/actions/search";
 import { CollectionIcon } from "@/components/collections/collection-icon";
 import { StatusBadge } from "@/components/entries/status-badge";
@@ -161,6 +161,21 @@ function SearchDialog({ open, onOpenChange, collections }: SearchDialogProps) {
                     </span>
                     <span className="ml-auto flex shrink-0 items-center gap-2">
                       <StatusBadge options={h.collection.status_options} status={h.status} className="hidden sm:inline-flex" />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label={`Edit ${h.title}`}
+                        title="Edit"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          go(`/collections/${h.collection.slug}/${h.id}/edit`);
+                        }}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Pencil />
+                      </Button>
                     </span>
                   </CommandItem>
                 ))}

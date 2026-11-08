@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Layers } from "lucide-react";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { SITE_NAME } from "@/lib/site";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {SITE_NAME}
       </Link>
       <div className="w-full max-w-sm">{children}</div>
+      <SiteFooter className="mt-10" />
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Layers } from "lucide-react";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { SITE_NAME } from "@/lib/site";
 
@@ -20,7 +21,8 @@ export default function ShareLayout({ children }: { children: React.ReactNode })
           Shared view
         </Badge>
       </header>
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 md:p-8">{children}</main>
+      <main className="mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col gap-6 overflow-x-clip p-4 md:p-8">{children}</main>
+      <SiteFooter className="px-4 pb-4 md:px-8" />
     </div>
   );
 }

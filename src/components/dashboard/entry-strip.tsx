@@ -19,7 +19,7 @@ export function EntryStrip({ title, description, entries, collections, fieldsByC
   });
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex min-w-0 flex-col gap-3">
       <div>
         <h2 className="font-heading text-lg font-semibold">{title}</h2>
         {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}

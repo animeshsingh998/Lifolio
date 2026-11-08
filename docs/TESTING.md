@@ -161,3 +161,14 @@ Migration 0006 is already applied.
 7. Share a collection with zero entries → "This collection has no entries", no Add button.
 8. Isolation: the shared page never shows other collections, your email, or any way to edit; deleting the collection
    makes its links unavailable.
+
+## Polish (2026-11-08)
+
+1. Phone width: the dashboard has no horizontal scroll; tiles, strips, collection cards and the activity feed all stay
+   inside the screen. Same for a collection page with many filters.
+2. Ctrl K → type a title → each result has a small pencil on the right; clicking it opens the edit page (clicking the
+   row still opens the detail page). The /search page cards show the pencil on hover as elsewhere.
+3. A movie with a white or very light poster: the status chip at the bottom-left of the cover is readable in both
+   themes (opaque backdrop, coloured text and border). The chip still opens the status menu.
+4. Every page ends with the footer line "© 2026 Lifolio · This website is managed and owned by Animesh." —
+   app pages, the login page and a shared link page.

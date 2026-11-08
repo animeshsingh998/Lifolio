@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppShellSkeleton } from "@/components/layout/app-shell-skeleton";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { SearchDialogProvider, SearchIconButton } from "@/components/search/search-dialog";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -34,7 +35,8 @@ async function AppShell({ children }: { children: React.ReactNode }) {
             <span className="text-sm font-medium">Lifolio</span>
             <SearchIconButton className="ml-auto" />
           </header>
-          <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">{children}</div>
+          <div className="flex min-w-0 flex-1 flex-col gap-6 overflow-x-clip p-4 md:p-8">{children}</div>
+          <SiteFooter className="px-4 pb-4 md:px-8" />
         </SidebarInset>
       </SearchDialogProvider>
     </SidebarProvider>

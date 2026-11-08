@@ -3,6 +3,12 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-08 — Polish (owner request)
+- Mobile dashboard no longer scrolls sideways: page wrapper and dashboard grids get `min-w-0` / explicit `minmax(0,1fr)` tracks and the wrapper clips horizontal overflow.
+- Ctrl K palette: pencil on each entry result → edit page directly (the /search page cards already had the hover pencil).
+- Status chips on covers use an opaque card backdrop with a tinted border so "Watched" / "Owned" stay legible on light posters (`StatusBadge onImage`, shared `statusChipClasses`).
+- Footer line on the app, auth and share shells: "This website is managed and owned by Animesh."
+
 ## 2026-11-07 — Public share links (owner request)
 - Share button on a collection page → link valid 1 h / 6 h / 1 d / 7 d; dialog lists active links with Revoke. Only the SHA-256 of the token is stored.
 - `/s/<token>`: read-only collection (filters, sort, pagination, grid/list) and `/s/<token>/<entryId>` detail, no login. Served by the security-definer `shared_collection()` function (hash + expiry + revoke checks); covers signed through a storage policy limited to currently shared collections. No service-role key.

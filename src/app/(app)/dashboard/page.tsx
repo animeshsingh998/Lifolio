@@ -75,15 +75,15 @@ export default async function DashboardPage() {
         </>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <section className="flex flex-col gap-3">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <section className="flex min-w-0 flex-col gap-3">
           <div className="flex items-center justify-between">
             <h2 className="font-heading text-lg font-semibold">Collections</h2>
             <Button variant="ghost" size="sm" nativeButton={false} render={<Link href="/collections" />}>
               Manage
             </Button>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2">
             {data.collections.map((c) => (
               <CollectionStatCard key={c.id} collection={c} stats={data.stats.get(c.id)} />
             ))}

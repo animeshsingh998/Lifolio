@@ -18,14 +18,14 @@ export function ActivityFeed({ activity, collections }: ActivityFeedProps) {
   const byId = new Map(collections.map((c) => [c.id, c]));
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex min-w-0 flex-col gap-3">
       <h2 className="font-heading text-lg font-semibold">Recent activity</h2>
       {activity.length === 0 ? (
         <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
           Changes to your entries and collections will show up here.
         </div>
       ) : (
-        <ol className="divide-y rounded-xl border bg-card">
+        <ol className="min-w-0 divide-y rounded-xl border bg-card">
           {activity.map((a) => {
             const Icon = ICONS[a.action] ?? Pencil;
             const collection = a.collection_id ? byId.get(a.collection_id) : undefined;
@@ -44,11 +44,11 @@ export function ActivityFeed({ activity, collections }: ActivityFeedProps) {
             return (
               <li key={a.id}>
                 {href ? (
-                  <Link href={href} className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50">
+                  <Link href={href} className="flex min-w-0 items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50">
                     {content}
                   </Link>
                 ) : (
-                  <div className="flex items-center gap-3 px-4 py-2.5 text-muted-foreground">{content}</div>
+                  <div className="flex min-w-0 items-center gap-3 px-4 py-2.5 text-muted-foreground">{content}</div>
                 )}
               </li>
             );

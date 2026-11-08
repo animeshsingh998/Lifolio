@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /** Routes reachable without a session. Everything else requires one. */
-const PUBLIC_PREFIXES = ["/login", "/signup", "/forgot-password", "/auth", "/s"];
+const PUBLIC_PREFIXES = ["/login", "/signup", "/forgot-password", "/auth", "/s", "/offline"];
 /** Routes that should bounce an already signed-in user to the app. */
 const AUTH_ONLY_PREFIXES = ["/login", "/signup", "/forgot-password"];
 

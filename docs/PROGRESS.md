@@ -3,6 +3,10 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-08 — PWA (owner request)
+- Installable: web manifest, icons (192 / 512 / maskable / Apple touch), theme colour, service worker with offline page. Registration only in production builds.
+- Fixed Vercel build: the footer's `new Date()` broke prerendering of the static auth pages under Cache Components; year removed. Local builds now run with `.next/cache` cleared before commits.
+
 ## 2026-11-08 — Polish (owner request)
 - Mobile dashboard no longer scrolls sideways: page wrapper and dashboard grids get `min-w-0` / explicit `minmax(0,1fr)` tracks and the wrapper clips horizontal overflow.
 - Ctrl K palette: pencil on each entry result → edit page directly (the /search page cards already had the hover pencil).

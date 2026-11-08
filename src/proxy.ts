@@ -9,8 +9,8 @@ export const config = {
   matcher: [
     /*
      * Run on everything except static assets, image optimisation files,
-     * the favicon, public images and the cron endpoint (which has its own auth).
+     * the favicon, public images, PWA files and the cron endpoint (which has its own auth).
      */
-    "/((?!_next/static|_next/image|favicon.ico|api/cron|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/cron|sw\\.js|manifest\\.webmanifest|icons/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

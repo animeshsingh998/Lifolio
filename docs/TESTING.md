@@ -172,3 +172,14 @@ Migration 0006 is already applied.
    themes (opaque backdrop, coloured text and border). The chip still opens the status menu.
 4. Every page ends with the footer line "© 2026 Lifolio · This website is managed and owned by Animesh." —
    app pages, the login page and a shared link page.
+
+## PWA (2026-11-08) — test on the deployed site, not localhost
+
+1. Android Chrome: open the site → menu → "Add to Home screen" (or the install banner) → the Lifolio icon (red tile,
+   white layers) appears; opening it shows no address bar and starts on the dashboard.
+2. iPhone Safari: Share → "Add to Home Screen" → same icon; opens full screen.
+3. Desktop Chrome/Edge: install icon in the address bar → opens in its own window.
+4. Offline: open the app, visit a couple of pages, turn on flight mode → reopen the app: a recently visited page or
+   the "You are offline" page appears instead of the browser error. Back online → "Try again" loads the dashboard.
+5. After a new deployment, reload twice → the new version is served (old caches are dropped on activate).
+6. A shared link (/s/…) still opens for a logged-out visitor; it is never cached by the worker.

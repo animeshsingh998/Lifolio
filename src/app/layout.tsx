@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Manrope, Space_Grotesk } from "next/font/google";
+import { PwaRegister } from "@/components/pwa-register";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,15 @@ const fontMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] 
 export const metadata: Metadata = {
   title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
   description: "A personal life dashboard and digital archive.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: SITE_NAME, statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#141211" },
+    { media: "(prefers-color-scheme: light)", color: "#fbfaf9" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -28,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
+          <PwaRegister />
         </ThemeProvider>
       </body>
     </html>

@@ -107,4 +107,9 @@ Owner: a Share button on a collection page → pick validity (1 h, 6 h, 1 d, 7 d
 - [ ] Profile settings (display name)
 
 ## Phase 5 — Later
-Goals & milestones · generic image provider · more field types · tag management · image galleries · custom SMTP · PWA
+Goals & milestones · generic image provider · more field types · tag management · image galleries · custom SMTP
+
+### PWA (built 2026-11-08)
+- `src/app/manifest.ts` (standalone, start at /dashboard), icons in `public/icons` + `src/app/apple-icon.png` generated from the Layers mark
+- `public/sw.js`: cache-first for hashed build assets, network-first for pages with last-copy / `/offline` fallback; shared pages are never cached; registered in production only (`PwaRegister`)
+- Proxy lets `sw.js`, the manifest, icons and `/offline` through unauthenticated

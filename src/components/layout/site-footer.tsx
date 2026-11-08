@@ -5,7 +5,7 @@ export function SiteFooter({ className }: { className?: string }) {
   return (
     <footer className={className}>
       <p className="text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {SITE_NAME} · This website is managed and owned by Animesh.
+        © {SITE_NAME} · This website is managed and owned by Animesh.
       </p>
     </footer>
   );

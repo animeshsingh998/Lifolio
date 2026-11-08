@@ -28,13 +28,13 @@ import type { CollectionSummary } from "@/types/domain";
 const NAV = [
   { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { title: "Collections", href: "/collections", icon: Library, exact: true },
-  { title: "Timeline", href: "/timeline", icon: Clock, badge: "Soon" },
+  { title: "Timeline", href: "/timeline", icon: Clock },
   { title: "Settings", href: "/settings", icon: Settings },
 ] as const;
 
-type AppSidebarProps = { user: CurrentUser; collections: CollectionSummary[] };
+type AppSidebarProps = { user: CurrentUser; displayName: string | null; collections: CollectionSummary[] };
 
-export function AppSidebar({ user, collections }: AppSidebarProps) {
+export function AppSidebar({ user, displayName, collections }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -73,7 +73,6 @@ export function AppSidebar({ user, collections }: AppSidebarProps) {
                       <item.icon />
                       <span>{item.title}</span>
                     </SidebarMenuButton>
-                    {"badge" in item ? <SidebarMenuBadge>{item.badge}</SidebarMenuBadge> : null}
                   </SidebarMenuItem>
                 );
               })}
@@ -110,7 +109,7 @@ export function AppSidebar({ user, collections }: AppSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter>
-        <UserMenu user={user} />
+        <UserMenu user={user} displayName={displayName} />
       </SidebarFooter>
     </Sidebar>
   );

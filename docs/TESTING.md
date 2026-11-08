@@ -183,3 +183,27 @@ Migration 0006 is already applied.
    the "You are offline" page appears instead of the browser error. Back online → "Try again" loads the dashboard.
 5. After a new deployment, reload twice → the new version is served (old caches are dropped on activate).
 6. A shared link (/s/…) still opens for a logged-out visitor; it is never cached by the worker.
+
+## Phase 4.2 — Timeline, export, settings
+
+**Timeline**
+1. Sidebar → Timeline (no "Soon" badge). Entries with a date appear newest first, grouped under month headings that
+   stick while scrolling; each row shows day, cover, title, collection, stars and status. Click → detail page.
+2. Toggle a collection chip → only that collection; toggle two → both. Pick a year → only that year; "Clear" resets.
+   The URL carries the choices; reload keeps them.
+3. The count line says how many entries have no date and are not shown. Give one of them a date → it appears.
+4. More than 60 dated entries → Newer / Older buttons at the bottom; page 2 keeps the filters.
+
+**Export**
+5. Settings → Data export → **Download everything (JSON)** → a file `lifolio-export-<date>.json` with your
+   collections, their fields and entries (no cover URLs, just storage paths).
+6. **CSV** next to a collection → `lifolio-<slug>-<date>.csv`; opens in Excel/Numbers with accents intact; columns are
+   Title, Status, Rating (out of 5), your date label, Tags, Favourite, Notes, then one column per custom field, then
+   Created/Updated. A note starting with "=" is prefixed with an apostrophe so it cannot run as a formula.
+7. Logged out, open `/api/export?format=json` → redirected to login (or 401 when called directly).
+
+**Settings**
+8. Profile → change the display name → Save → toast; the sidebar footer and the dashboard greeting ("Hello, …") show it.
+9. Account → new password twice → "Password changed"; log out and back in with it. Mismatched passwords show an
+   inline error; shorter than 8 characters is rejected.
+10. "Member since" shows your sign-up date; Log out still works; theme toggle unchanged.

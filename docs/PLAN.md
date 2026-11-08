@@ -101,10 +101,12 @@ Owner: a Share button on a collection page → pick validity (1 h, 6 h, 1 d, 7 d
 - UI: Share dialog on the collection page (duration choice → link + copy button; list of active links with expiry and Revoke); cards/rows/entries view get a `readOnly` mode (no quick controls, no edit, links stay inside `/s/…`)
 - [x] migration `0006_shares.sql` applied · [x] actions + queries · [x] share dialog · [x] `/s/[token]` + detail + unavailable page · [x] read-only card/row/view · [ ] Owner: test per `TESTING.md`
 
-### 4.2 Later in Phase 4
-- [ ] Timeline by `occurred_on` (month groups, reuses the filter bar idea)
-- [ ] JSON + CSV export (`/api/export`)
-- [ ] Profile settings (display name)
+### 4.2 Timeline, export, settings (built 2026-11-08, awaiting owner test)
+- [x] Timeline: dated entries across collections, newest first, grouped by month with sticky headings; collection chips + year picker in the URL (`?c=&year=&page=`); 60 per page; undated count shown
+- [x] Export: `GET /api/export?format=json` (everything, paged under the hood) and `?format=csv&collection=<id>` (one collection: promoted columns + one per custom field, BOM, formula-safe); buttons on Settings
+- [x] Settings: display name (sidebar + dashboard greeting), change password, member-since, theme, export, log out
+- [ ] Owner: test per `TESTING.md`
+- Not done: avatar upload, account deletion (needs a service-role function; owner can delete from the Supabase dashboard)
 
 ## Phase 5 — Later
 Goals & milestones · generic image provider · more field types · tag management · image galleries · custom SMTP

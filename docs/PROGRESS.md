@@ -3,6 +3,12 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-08 — Phase 4.2: timeline, export, settings (code complete, not yet tested by owner)
+- Timeline live (sidebar "Soon" badge gone): month-grouped list with collection chips and a year picker, paginated.
+- Export: JSON of everything and CSV per collection from Settings → Data export, via `/api/export` (session required, RLS-scoped, pages through PostgREST's 1000-row cap).
+- Settings: Profile (display name, used in the user menu and the dashboard greeting), Account (change password, member since, log out), Appearance, Data export.
+- New pure modules with tests: `lib/export/csv.ts`, `lib/timeline/params.ts` (42 tests total).
+
 ## 2026-11-08 — PWA (owner request)
 - Installable: web manifest, icons (192 / 512 / maskable / Apple touch), theme colour, service worker with offline page. Registration only in production builds.
 - Fixed Vercel build: the footer's `new Date()` broke prerendering of the static auth pages under Cache Components; year removed. Local builds now run with `.next/cache` cleared before commits.

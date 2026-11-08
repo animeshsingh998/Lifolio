@@ -16,10 +16,11 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import type { CurrentUser } from "@/lib/auth";
 
-export function UserMenu({ user }: { user: CurrentUser }) {
+export function UserMenu({ user, displayName }: { user: CurrentUser; displayName: string | null }) {
   const { isMobile } = useSidebar();
   const email = user.email ?? "Account";
-  const initial = email.charAt(0).toUpperCase();
+  const name = displayName?.trim() || email;
+  const initial = name.charAt(0).toUpperCase();
 
   return (
     <SidebarMenu>
@@ -36,7 +37,10 @@ export function UserMenu({ user }: { user: CurrentUser }) {
             <Avatar className="size-8 rounded-lg">
               <AvatarFallback className="rounded-lg">{initial}</AvatarFallback>
             </Avatar>
-            <span className="truncate text-sm">{email}</span>
+            <span className="flex min-w-0 flex-col text-left leading-tight">
+              <span className="truncate text-sm font-medium">{name}</span>
+              {name !== email ? <span className="truncate text-xs text-muted-foreground">{email}</span> : null}
+            </span>
             <ChevronsUpDown className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent

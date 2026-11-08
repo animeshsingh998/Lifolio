@@ -8,11 +8,13 @@ import { EmptyState } from "@/components/layout/empty-state";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { getDashboardData } from "@/lib/queries/dashboard";
+import { getProfile } from "@/lib/queries/profile";
 
 export const metadata = { title: "Dashboard" };
 
 export default async function DashboardPage() {
-  const data = await getDashboardData();
+  const [data, profile] = await Promise.all([getDashboardData(), getProfile()]);
+  const greeting = profile?.display_name ? `Hello, ${profile.display_name}.` : "An overview of everything you track.";
 
   if (data.collections.length === 0) {
     return (
@@ -36,7 +38,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <PageHeader title="Dashboard" description="An overview of everything you track." />
+      <PageHeader title="Dashboard" description={greeting} />
       <StatTiles totals={data.totals} />
 
       {data.totals.entries === 0 ? (

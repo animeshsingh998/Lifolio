@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { requireUser } from "@/lib/auth";
 import { listCollections } from "@/lib/queries/collections";
+import { getProfile } from "@/lib/queries/profile";
 import type { CollectionSummary } from "@/types/domain";
 
 async function AppShell({ children }: { children: React.ReactNode }) {
@@ -18,16 +19,17 @@ async function AppShell({ children }: { children: React.ReactNode }) {
   // The sidebar must never take the whole app down (e.g. before migrations are applied);
   // pages surface the real error through their own error boundaries.
   let collections: CollectionSummary[] = [];
+  let displayName: string | null = null;
   try {
-    collections = await listCollections();
+    [collections, displayName] = await Promise.all([listCollections(), getProfile().then((p) => p?.display_name ?? null)]);
   } catch (error) {
-    console.error("[lifolio] sidebar collections:", error);
+    console.error("[lifolio] sidebar data:", error);
   }
 
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
       <SearchDialogProvider collections={collections}>
-        <AppSidebar user={user} collections={collections} />
+        <AppSidebar user={user} displayName={displayName} collections={collections} />
         <SidebarInset>
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4 md:hidden">
             <SidebarTrigger className="-ml-1" />

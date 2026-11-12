@@ -2,11 +2,14 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchWithRetry } from "@/lib/lookup/fetch-retry";
+import { processCoverImage } from "./process";
 import type { Database } from "@/types/database";
 
 export const IMAGE_BUCKET = "entry-images";
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 export const SIGNED_URL_TTL = 60 * 60; // 1 hour
+/** Processed covers live under <user>/c/; anything else in the bucket predates processing. */
+export const PROCESSED_FOLDER = "c";
 
 const EXT: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -54,16 +57,37 @@ export async function fetchRemoteImage(url: string): Promise<{ bytes: Uint8Array
   return { bytes, contentType };
 }
 
-/** Uploads bytes under the user's folder and returns the storage path. */
+export function isProcessedPath(path: string, userId: string): boolean {
+  return path.startsWith(`${userId}/${PROCESSED_FOLDER}/`);
+}
+
+/**
+ * Resizes to a web-sized WebP and uploads it under the user's folder; returns the storage path.
+ * Covers are served as-is from the bucket (no per-request optimisation), so this is the only resize.
+ */
 export async function uploadImage(supabase: Client, userId: string, bytes: Uint8Array | File, contentType: string): Promise<string> {
-  const ext = EXT[contentType];
-  if (!ext) throw new Error("Unsupported image type.");
-  const path = `${userId}/${randomUUID()}.${ext}`;
+  if (!EXT[contentType]) throw new Error("Unsupported image type.");
+  const input = bytes instanceof Uint8Array ? bytes : await bytes.arrayBuffer();
+  let processed;
+  try {
+    processed = await processCoverImage(input);
+  } catch (error) {
+    console.error("[lifolio] process image:", error);
+    throw new Error("That file could not be read as an image.");
+  }
+  const path = `${userId}/${PROCESSED_FOLDER}/${randomUUID()}.webp`;
   const { error } = await supabase.storage
     .from(IMAGE_BUCKET)
-    .upload(path, bytes, { contentType, cacheControl: "31536000", upsert: false });
+    .upload(path, processed.bytes, { contentType: processed.contentType, cacheControl: "31536000", upsert: false });
   if (error) throw new Error(`Upload failed: ${error.message}`);
   return path;
+}
+
+/** Downloads an existing object (RLS applies) as bytes. */
+export async function downloadImage(supabase: Client, path: string): Promise<Uint8Array> {
+  const { data, error } = await supabase.storage.from(IMAGE_BUCKET).download(path);
+  if (error || !data) throw new Error(`Download failed: ${error?.message ?? "no data"}`);
+  return new Uint8Array(await data.arrayBuffer());
 }
 
 export async function storeImageFromUrl(supabase: Client, userId: string, url: string): Promise<string> {

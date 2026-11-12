@@ -141,8 +141,13 @@ create index on activity_log (user_id, created_at desc);
 
 Triggers: `set_updated_at()` on profiles/collections/entries; `handle_new_user()` inserts
 a profile row on `auth.users` insert; a trigger on `entries` writes `activity_log` rows
-(Phase 4). Storage: private bucket `entry-images`, object path `{user_id}/{uuid}.{ext}` (flat: uploads happen
-before the entry exists; originals are stored as-is, resizing is a later enhancement).
+(Phase 4). Storage: private bucket `entry-images`. Every cover (upload, pasted URL or provider image) is
+re-encoded once on the server by `lib/images/process.ts` (sharp: EXIF auto-rotate, ≤ 1200 px long edge, WebP q80,
+metadata stripped) and stored at `{user_id}/c/{uuid}.webp`; uploads happen before the entry exists, so the form
+holds the path. Covers are then served as-is through hourly signed URLs — `images.unoptimized` is on, because
+Vercel's optimiser is metered per transformation and a URL that changes every hour is a cache miss every hour.
+Paths outside `{user_id}/c/` predate this; Settings offers a one-off re-encode (`relink_cover()` swaps the path
+without an activity row or `updated_at` bump).
 
 ### 2.1 Why promote `status`, `rating`, `occurred_on`, `tags`, `cover_image_path`
 
@@ -280,7 +285,7 @@ Everything else is derived from the registry plus the rows in `collection_fields
 ```
 lifolio/
 ├─ proxy.ts                         # session refresh + auth redirect (Next 16 convention)
-├─ next.config.ts                   # images.remotePatterns for Supabase storage
+├─ next.config.ts                   # images.unoptimized (covers are pre-sized), 9 MB action body limit
 ├─ supabase/
 │  ├─ config.toml
 │  └─ migrations/                   # 0001_init.sql, 0002_rls.sql, 0003_storage.sql …

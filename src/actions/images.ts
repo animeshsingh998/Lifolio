@@ -24,6 +24,7 @@ export async function uploadEntryImage(formData: FormData): Promise<ActionResult
     return ok({ path, url: url ?? "" });
   } catch (error) {
     console.error("[lifolio] upload image:", error);
+    if (error instanceof Error && error.message.startsWith("That file")) return fail(error.message);
     return fail("Upload failed. Please try again.");
   }
 }

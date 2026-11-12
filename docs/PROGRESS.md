@@ -3,6 +3,12 @@
 Short log of what is done, what is in flight, and anything the owner must do by hand.
 Newest first.
 
+## 2026-11-12 — Covers resized at upload; Vercel image optimisation off (owner action needed)
+- Why: Vercel warned at 75 % of the Hobby plan's monthly image transformations. Signed cover URLs change hourly, so the optimiser re-transformed every cover every hour.
+- Now: sharp re-encodes every new cover once (≤ 1200 px WebP, metadata stripped); `images.unoptimized` serves them as-is. Zero transformations from here on.
+- **Owner:** after deploying, open Settings on the live site and press **Optimise N covers** once to convert the covers stored before this change. The card disappears when none are left.
+- Also fixed: uploads above 1 MB were rejected by the Server Action body limit; now 9 MB.
+
 ## 2026-11-08 — Phase 4.2: timeline, export, settings (code complete, not yet tested by owner)
 - Timeline live (sidebar "Soon" badge gone): month-grouped list with collection chips and a year picker, paginated.
 - Export: JSON of everything and CSV per collection from Settings → Data export, via `/api/export` (session required, RLS-scoped, pages through PostgREST's 1000-row cap).

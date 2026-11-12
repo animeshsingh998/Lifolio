@@ -220,6 +220,10 @@ export type Database = {
         Args: { p_token_hash: string };
         Returns: Json;
       };
+      relink_cover: {
+        Args: { p_entry_id: string; p_from: string; p_to: string };
+        Returns: boolean;
+      };
       is_shared_cover: {
         Args: { p_name: string };
         Returns: boolean;

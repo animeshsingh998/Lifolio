@@ -2,19 +2,21 @@ import { Download, FileJson, FileSpreadsheet } from "lucide-react";
 import { logout } from "@/actions/auth";
 import { CollectionIcon } from "@/components/collections/collection-icon";
 import { PageHeader } from "@/components/layout/page-header";
+import { OptimiseCoversButton } from "@/components/settings/optimise-covers";
 import { DisplayNameForm, PasswordForm } from "@/components/settings/profile-form";
 import { ThemeToggle } from "@/components/settings/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth";
 import { listCollections } from "@/lib/queries/collections";
+import { countUnprocessedCovers } from "@/lib/queries/covers";
 import { getProfile } from "@/lib/queries/profile";
 
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
   const user = await requireUser();
-  const [profile, collections] = await Promise.all([getProfile(), listCollections()]);
+  const [profile, collections, unprocessedCovers] = await Promise.all([getProfile(), listCollections(), countUnprocessedCovers()]);
   const since = profile ? new Date(profile.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : null;
 
   return (
@@ -59,6 +61,21 @@ export default async function SettingsPage() {
             <ThemeToggle />
           </CardContent>
         </Card>
+
+        {unprocessedCovers > 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Cover images</CardTitle>
+              <CardDescription>
+                New covers are resized to web size when they are added. {unprocessedCovers === 1 ? "One older cover is" : `${unprocessedCovers} older covers are`} still
+                stored at full size; converting them makes pages lighter, and the originals are removed.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <OptimiseCoversButton initialRemaining={unprocessedCovers} />
+            </CardContent>
+          </Card>
+        ) : null}
 
         <Card>
           <CardHeader>

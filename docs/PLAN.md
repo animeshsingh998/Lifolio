@@ -61,7 +61,7 @@ Out of scope for Phase 2 (Phase 3): search / filter / sort, cover images and Sto
 - [x] Collection settings: choose a lookup provider (so blank collections can use one)
 - [x] Owner: tested
 - Deferred: generic image search for watches / shoes etc. — **Brave Image Search** (`brave_images`, env `BRAVE_SEARCH_API_KEY`); decided 2026-11-06 to add later if needed. Google's image API is closed to new customers. Until then: upload or paste a URL.
-- Deferred: `image` custom field type (extra photos) and server-side resize/WebP conversion.
+- Deferred: `image` custom field type (extra photos). Server-side resize/WebP conversion done 2026-11-12 (see "Cover images" below).
 
 ### 3.2 Bulk import from JSON (done)
 - Input: JSON array of `{ title | name, rating?, year?, status?, date?, tags?, notes?, <custom field label>? }`; ratings out of 5 (auto-detect, overridable)
@@ -110,6 +110,15 @@ Owner: a Share button on a collection page → pick validity (1 h, 6 h, 1 d, 7 d
 
 ## Phase 5 — Later
 Goals & milestones · generic image provider · more field types · tag management · image galleries · custom SMTP
+
+### Cover images: resize at upload (built 2026-11-12, awaiting owner test)
+Trigger: Vercel emailed that 75 % of the Hobby plan's 5,000 monthly image transformations were used; hourly signed URLs made every cover a fresh transformation every hour. Decision: resize ourselves, serve as-is (option 2 of remove / self-resize / third party).
+- [x] `lib/images/process.ts`: sharp → ≤ 1200 px, WebP q80, auto-rotate, metadata (GPS) stripped; applied to uploads, pasted URLs and provider images; stored at `{user}/c/{uuid}.webp`
+- [x] `next.config.ts`: `images.unoptimized: true` (no Vercel transformations at all), `serverActions.bodySizeLimit: "9mb"` so the advertised 8 MB upload actually works (default was 1 MB)
+- [x] Migration `0007_relink_cover.sql`: `relink_cover(entry, from, to)` + `set_updated_at()` honours `lifolio.keep_updated_at`; pushed
+- [x] Settings → "Cover images" card (only while older covers exist): converts in batches of 5 from the browser, removes originals, shows progress
+- [ ] Owner: click **Optimise N covers** once on the deployed site, then test per `TESTING.md`
+- sharp is now an explicit dependency (it was already present as Next's optional dependency)
 
 ### PWA (built 2026-11-08)
 - `src/app/manifest.ts` (standalone, start at /dashboard), icons in `public/icons` + `src/app/apple-icon.png` generated from the Layers mark

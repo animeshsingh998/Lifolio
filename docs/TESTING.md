@@ -207,3 +207,18 @@ Migration 0006 is already applied.
 9. Account → new password twice → "Password changed"; log out and back in with it. Mismatched passwords show an
    inline error; shorter than 8 characters is rejected.
 10. "Member since" shows your sign-up date; Log out still works; theme toggle unchanged.
+
+## Cover images — resize at upload (2026-11-12)
+
+1. Deploy, then Settings on the live site → "Cover images" card shows how many older covers exist → **Optimise N covers**.
+   Progress counts up in batches of 5; "All covers optimised" toast at the end; reload → the card is gone.
+   Covers still show on cards, rows, detail, timeline, search and share pages. Activity feed has no new "Updated" rows and
+   collection sort by "Recently updated" is unchanged.
+2. Add an entry with a phone photo (several MB, portrait, with EXIF rotation) → it uploads (no "Upload failed"), displays the
+   right way up. In the Supabase dashboard → Storage → entry-images → `<your id>/c/` the new file is a `.webp` of roughly
+   50–200 KB.
+3. Pick a TMDB poster / Google Books cover → saved entry's cover also lands in `c/` as WebP.
+4. Paste an image URL → same.
+5. Upload an animated GIF → first frame is kept (expected).
+6. Upload a non-image renamed to .jpg → "That file could not be read as an image."
+7. Vercel → project → Usage → Image Optimization: transformations stop increasing after the deploy.
